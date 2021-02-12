@@ -1,6 +1,6 @@
 
-# this file is generated from idgen.py using properties from the 
-# unicode character database
+# this file is generated from woosh/unicode/generate.py using
+# properties from the unicode character database
 
 from typing import Final
 XID_START: Final = (

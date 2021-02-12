@@ -21,4 +21,8 @@
 
 __all__ = []
 
-from ._tokenizer import tokenize, TokenType
+from _woosh import (
+    tokenize, Token, Type,
+    COMMENT, DEDENT, ENCODING, EOF, ERROR, INDENT, NAME, NEWLINE, NUMBER, OP,
+    STRING,
+)

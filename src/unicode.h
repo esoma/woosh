@@ -1,6 +1,6 @@
 
-// this file is generated from idgen.py using properties from the 
-// unicode character database
+// this file is generated from woosh/unicode/generate.py using
+// properties from the unicode character database
 
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>

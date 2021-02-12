@@ -10,9 +10,24 @@ with open(README_FILE_PATH) as f:
     long_description = f.read()
     
 tokenizer = Extension(
-    'woosh._tokenizer',
+    '_woosh',
     include_dirs=['src'],
-    sources=['src/tokenizer.c'],
+    sources=[
+        'src/module.c',
+        'src/modulestate.c',
+        'src/tokenizerobject.c',
+        'src/tokenizerobject_encoding.c',
+        'src/tokenizerobject_group.c',
+        'src/tokenizerobject_indent.c',
+        'src/tokenizerobject_mechanics.c',
+        'src/tokenizerobject_number.c',
+        'src/tokenizerobject_operator.c',
+        'src/tokenizerobject_parse.c',
+        'src/tokenizerobject_sets.c',
+        'src/tokenizerobject_string.c',
+        'src/tokenobject.c',
+        'src/typeobject.c',
+    ],
     language='c',
 )
 
