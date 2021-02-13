@@ -1,13 +1,16 @@
 
 from __future__ import annotations
 
-import io
-import itertools
-import pytest
-from typing import Any, Final, Sequence, Tuple, NamedTuple
-import textwrap
+# woosh
 import ucd
 import woosh
+# pytest
+import pytest
+# python
+import io
+import itertools
+import textwrap
+from typing import Any, Final, Sequence, Tuple, NamedTuple
 
 
 UTF8_BOM: Final = b'\xEF\xBB\xBF'
