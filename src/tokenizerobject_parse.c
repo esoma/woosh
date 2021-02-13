@@ -4,9 +4,9 @@
 #include <Python.h>
 // woosh
 #include "modulestate.h"
-#include "tokenizerobject.h"
+#include "woosh/tokenizerobject.h"
 #include "tokenizerobject_internal.h"
-#include "tokenobject.h"
+#include "woosh/tokenobject.h"
 
 int
 init_parse(WooshTokenizer *tokenizer)

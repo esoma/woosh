@@ -1,10 +1,10 @@
 
 // woosh
-#include "module.h"
+#include "woosh/module.h"
 #include "modulestate.h"
-#include "tokenobject.h"
-#include "tokenizerobject.h"
-#include "typeobject.h"
+#include "woosh/tokenobject.h"
+#include "woosh/tokenizerobject.h"
+#include "woosh/typeobject.h"
 
 static PyObject *
 woosh_module_tokenize(PyObject *self, PyObject *args)
@@ -79,7 +79,6 @@ PyInit__woosh()
         Py_INCREF(destination);
 
         WOOSHTYPE_ADD(state->newline_type, "NEWLINE");
-        WOOSHTYPE_ADD(state->nl_type, "NL");
         WOOSHTYPE_ADD(state->operator_type, "OP");
         WOOSHTYPE_ADD(state->indent_type, "INDENT");
         WOOSHTYPE_ADD(state->dedent_type, "DEDENT");

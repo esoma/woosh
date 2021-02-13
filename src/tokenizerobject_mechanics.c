@@ -13,7 +13,7 @@
 // woosh
 #include "fifobuffer.h"
 #include "modulestate.h"
-#include "tokenizerobject.h"
+#include "woosh/tokenizerobject.h"
 #include "tokenizerobject_internal.h"
 
 int

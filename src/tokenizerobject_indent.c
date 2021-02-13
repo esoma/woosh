@@ -12,7 +12,7 @@
 #include <Python.h>
 // woosh
 #include "modulestate.h"
-#include "tokenizerobject.h"
+#include "woosh/tokenizerobject.h"
 #include "tokenizerobject_internal.h"
 
 // this is the number of spaces to consider a tab for indentation, this is the

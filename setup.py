@@ -11,7 +11,7 @@ with open(README_FILE_PATH) as f:
     
 tokenizer = Extension(
     '_woosh',
-    include_dirs=['src'],
+    include_dirs=['src', 'inc'],
     sources=[
         'src/module.c',
         'src/modulestate.c',

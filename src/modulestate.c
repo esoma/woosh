@@ -1,6 +1,6 @@
 
 // woosh
-#include "module.h"
+#include "woosh/module.h"
 #include "modulestate.h"
 
 // get the ModuleState for woosh
@@ -24,7 +24,6 @@ WooshModuleState_Traverse_(
     Py_VISIT(self->tokenizer);
 
     Py_VISIT(self->newline_type);
-    Py_VISIT(self->nl_type);
     Py_VISIT(self->operator_type);
     Py_VISIT(self->indent_type);
     Py_VISIT(self->dedent_type);
@@ -46,7 +45,6 @@ WooshModuleState_Clear_(struct WooshModuleState *self)
     Py_CLEAR(self->tokenizer);
 
     Py_CLEAR(self->newline_type);
-    Py_CLEAR(self->nl_type);
     Py_CLEAR(self->operator_type);
     Py_CLEAR(self->indent_type);
     Py_CLEAR(self->dedent_type);

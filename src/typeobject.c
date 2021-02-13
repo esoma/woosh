@@ -9,7 +9,7 @@
 #include <Python.h>
 // woosh
 #include "modulestate.h"
-#include "typeobject.h"
+#include "woosh/typeobject.h"
 
 struct WooshType_
 {

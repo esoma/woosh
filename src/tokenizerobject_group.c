@@ -18,7 +18,7 @@
 #include <Python.h>
 // woosh
 #include "lifobuffer.h"
-#include "tokenizerobject.h"
+#include "woosh/tokenizerobject.h"
 #include "tokenizerobject_internal.h"
 
 int

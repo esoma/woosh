@@ -11,7 +11,7 @@
 #include <Python.h>
 // woosh
 #include "modulestate.h"
-#include "tokenobject.h"
+#include "woosh/tokenobject.h"
 
 struct WooshToken_
 {

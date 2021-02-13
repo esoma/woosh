@@ -9,8 +9,8 @@
 // woosh
 #include "lifobuffer.h"
 #include "modulestate.h"
-#include "tokenobject.h"
-#include "tokenizerobject.h"
+#include "woosh/tokenobject.h"
+#include "woosh/tokenizerobject.h"
 #include "tokenizerobject_internal.h"
 
 static WooshTokenizer *create_tokenizer(PyObject *, PyObject *);
@@ -50,7 +50,6 @@ woosh_tokenizer_traverse(WooshTokenizer *self, visitproc visit, void *arg)
     Py_VISIT(self->type);
     Py_VISIT(self->token);
     Py_VISIT(self->newline_type);
-    Py_VISIT(self->nl_type);
     Py_VISIT(self->operator_type);
     Py_VISIT(self->indent_type);
     Py_VISIT(self->dedent_type);
@@ -59,7 +58,6 @@ woosh_tokenizer_traverse(WooshTokenizer *self, visitproc visit, void *arg)
     Py_VISIT(self->string_type);
     Py_VISIT(self->comment_type);
     Py_VISIT(self->eof_type);
-    Py_VISIT(self->error_type);
     Py_VISIT(self->error_type);
     Py_VISIT(self->encoding_type);
     Py_VISIT(self->source);
@@ -78,7 +76,6 @@ woosh_tokenizer_clear(WooshTokenizer *self)
     Py_CLEAR(self->type);
     Py_CLEAR(self->token);
     Py_CLEAR(self->newline_type);
-    Py_CLEAR(self->nl_type);
     Py_CLEAR(self->operator_type);
     Py_CLEAR(self->indent_type);
     Py_CLEAR(self->dedent_type);
@@ -87,7 +84,6 @@ woosh_tokenizer_clear(WooshTokenizer *self)
     Py_CLEAR(self->string_type);
     Py_CLEAR(self->comment_type);
     Py_CLEAR(self->eof_type);
-    Py_CLEAR(self->error_type);
     Py_CLEAR(self->error_type);
     Py_CLEAR(self->encoding_type);
     Py_CLEAR(self->source);
@@ -205,7 +201,6 @@ create_tokenizer(PyObject *module, PyObject *source)
     COPY_MODULE_STATE(type);
     COPY_MODULE_STATE(token);
     COPY_MODULE_STATE(newline_type);
-    COPY_MODULE_STATE(nl_type);
     COPY_MODULE_STATE(operator_type);
     COPY_MODULE_STATE(indent_type);
     COPY_MODULE_STATE(dedent_type);

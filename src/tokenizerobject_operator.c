@@ -4,7 +4,7 @@
 #include <Python.h>
 // woosh
 #include "modulestate.h"
-#include "tokenizerobject.h"
+#include "woosh/tokenizerobject.h"
 #include "tokenizerobject_internal.h"
 
 // parse something starting with a '.'

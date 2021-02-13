@@ -5,7 +5,7 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 // woosh
-#include "typeobject.h"
+#include "woosh/typeobject.h"
 
 // per-interpreter module state
 struct WooshModuleState
@@ -16,7 +16,6 @@ struct WooshModuleState
     PyTypeObject *tokenizer;
     // all the type instances defined on the module
     WooshType *newline_type;
-    WooshType *nl_type;
     WooshType *operator_type;
     WooshType *indent_type;
     WooshType *dedent_type;
