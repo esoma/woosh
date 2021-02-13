@@ -33,6 +33,7 @@ woosh_tokenizer_dealloc(WooshTokenizer *self)
 static WooshTokenizer *
 woosh_tokenizer_iter(WooshTokenizer *self)
 {
+    Py_INCREF(self);
     return self;
 }
 
@@ -133,6 +134,8 @@ WooshTokenizer_Initialize_(PyObject *module)
 WooshTokenizer *
 WooshTokenizer_New_(PyObject *module, PyObject *source)
 {
+    assert(module);
+    assert(source);
     return create_tokenizer(module, source);
 }
 
