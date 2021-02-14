@@ -42,20 +42,6 @@ dealloc_groups(WooshTokenizer *tokenizer)
     lifo_buffer_delete(&tokenizer->groups.stack);
 }
 
-int
-visit_groups(WooshTokenizer *tokenizer, visitproc visit, void *arg)
-{
-    assert(tokenizer);
-    return 1;
-}
-
-int
-clear_groups(WooshTokenizer *tokenizer)
-{
-    assert(tokenizer);
-    return 1;
-}
-
 // push a group character onto the stack
 // returns a truthy value on success, returns a falsey value if there was a
 // memory error (this does not set a python exception)

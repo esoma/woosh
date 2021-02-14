@@ -27,20 +27,6 @@ dealloc_parse(WooshTokenizer *tokenizer)
     assert(tokenizer);
 }
 
-int
-visit_parse(WooshTokenizer *tokenizer, visitproc visit, void *arg)
-{
-    assert(tokenizer);
-    return 1;
-}
-
-int
-clear_parse(WooshTokenizer *tokenizer)
-{
-    assert(tokenizer);
-    return 1;
-}
-
 // parse a newline character
 //
 // the span must either be `\n` or `\r\n`

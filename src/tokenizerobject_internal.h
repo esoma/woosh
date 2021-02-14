@@ -132,22 +132,16 @@ struct WooshTokenizer_
 // tokenizerobject_parse.c
 int init_parse(WooshTokenizer *);
 void dealloc_parse(WooshTokenizer *);
-int visit_parse(WooshTokenizer *, visitproc, void *);
-int clear_parse(WooshTokenizer *);
 WooshToken *parse(WooshTokenizer *);
 WooshToken *parse_name(WooshTokenizer *);
 // tokenizerobject_encode.c
 int init_encoding(WooshTokenizer *);
 void dealloc_encoding(WooshTokenizer *);
-int visit_encoding(WooshTokenizer *, visitproc, void *);
-int clear_encoding(WooshTokenizer *);
 const char *encoding(WooshTokenizer *);
 WooshToken *parse_encoding(WooshTokenizer *);
 // tokenizerobject_indent.c
 int init_indent(WooshTokenizer *);
 void dealloc_indent(WooshTokenizer *);
-int visit_indent(WooshTokenizer *, visitproc, void *);
-int clear_indent(WooshTokenizer *);
 WooshToken *parse_line_start(WooshTokenizer *);
 WooshToken *continue_dedent(WooshTokenizer *);
 WooshToken *cleanup_dedents(WooshTokenizer *);
@@ -163,8 +157,6 @@ int is_name_continue(Py_UCS4);
 // tokenizerobject_mechanics.c
 int init_mechanics(WooshTokenizer *);
 void dealloc_mechanics(WooshTokenizer *);
-int visit_mechanics(WooshTokenizer *, visitproc, void *);
-int clear_mechanics(WooshTokenizer *);
 Py_UCS4 peek_is_null(WooshTokenizer *, size_t, int *);
 Py_UCS4 peek(WooshTokenizer *, size_t);
 Py_UCS4 review(WooshTokenizer *, size_t);
@@ -182,8 +174,6 @@ WooshToken *error_format(WooshTokenizer *, const char *, ...);
 // tokenizerobject_groups.c
 int init_groups(WooshTokenizer *);
 void dealloc_groups(WooshTokenizer *);
-int visit_groups(WooshTokenizer *, visitproc, void *);
-int clear_groups(WooshTokenizer *);
 char peek_group(WooshTokenizer *);
 WooshToken *parse_open_operator(WooshTokenizer *);
 WooshToken *parse_close_operator(WooshTokenizer *);

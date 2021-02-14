@@ -62,20 +62,6 @@ dealloc_mechanics(WooshTokenizer *tokenizer)
     }
 }
 
-int
-visit_mechanics(WooshTokenizer *tokenizer, visitproc visit, void *arg)
-{
-    assert(tokenizer);
-    return 1;
-}
-
-int
-clear_mechanics(WooshTokenizer *tokenizer)
-{
-    assert(tokenizer);
-    return 1;
-}
-
 // reads the next line from the source and puts it in the buffer
 //
 // returns a truthy value on success, returns falsey if there was an error and

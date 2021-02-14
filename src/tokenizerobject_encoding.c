@@ -25,32 +25,6 @@ dealloc_encoding(WooshTokenizer *tokenizer)
     Py_CLEAR(tokenizer->encoding.name);
 }
 
-int
-visit_encoding(WooshTokenizer *tokenizer, visitproc visit, void *arg)
-{
-    assert(tokenizer);
-    /* TODO: Access violation?
-    if (tokenizer->encoding.name)
-    {
-        assert(!PyObject_IS_GC(tokenizer->encoding.name));
-    }
-    */
-    return 1;
-}
-
-int
-clear_encoding(WooshTokenizer *tokenizer)
-{
-    assert(tokenizer);
-    /* TODO: Access violation?
-    if (tokenizer->encoding.name)
-    {
-        assert(!PyObject_IS_GC(tokenizer->encoding.name));
-    }
-    */
-    return 1;
-}
-
 // https://en.wikipedia.org/wiki/Byte_order_mark#UTF-8
 static const char *UTF8_BOM = "\xEF\xBB\xBF";
 

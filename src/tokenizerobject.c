@@ -21,6 +21,19 @@ static WooshToken *iter_tokenizer(WooshTokenizer *);
 static void
 woosh_tokenizer_dealloc(WooshTokenizer *self)
 {
+    Py_CLEAR(self->type);
+    Py_CLEAR(self->token);
+    Py_CLEAR(self->newline_type);
+    Py_CLEAR(self->operator_type);
+    Py_CLEAR(self->indent_type);
+    Py_CLEAR(self->dedent_type);
+    Py_CLEAR(self->name_type);
+    Py_CLEAR(self->number_type);
+    Py_CLEAR(self->string_type);
+    Py_CLEAR(self->comment_type);
+    Py_CLEAR(self->eof_type);
+    Py_CLEAR(self->error_type);
+    Py_CLEAR(self->encoding_type);
     Py_CLEAR(self->source);
 
     dealloc_mechanics(self);
@@ -45,58 +58,6 @@ woosh_tokenizer_iternext(WooshTokenizer *self)
     return (PyObject *)WooshTokenizer_NEXT(self);
 }
 
-// tp_traverse for Tokenizer
-static int
-woosh_tokenizer_traverse(WooshTokenizer *self, visitproc visit, void *arg)
-{
-    Py_VISIT(self->type);
-    Py_VISIT(self->token);
-    Py_VISIT(self->newline_type);
-    Py_VISIT(self->operator_type);
-    Py_VISIT(self->indent_type);
-    Py_VISIT(self->dedent_type);
-    Py_VISIT(self->name_type);
-    Py_VISIT(self->number_type);
-    Py_VISIT(self->string_type);
-    Py_VISIT(self->comment_type);
-    Py_VISIT(self->eof_type);
-    Py_VISIT(self->error_type);
-    Py_VISIT(self->encoding_type);
-    Py_VISIT(self->source);
-    if (!visit_mechanics(self, visit, arg)){ return -1; }
-    if (!visit_parse(self, visit, arg)){ return -1; }
-    if (!visit_encoding(self, visit, arg)){ return -1; }
-    if (!visit_groups(self, visit, arg)){ return -1; }
-    if (!visit_indent(self, visit, arg)){ return - 1; }
-    return 0;
-}
-
-// tp_clear for Tokenizer
-static int
-woosh_tokenizer_clear(WooshTokenizer *self)
-{
-    Py_CLEAR(self->type);
-    Py_CLEAR(self->token);
-    Py_CLEAR(self->newline_type);
-    Py_CLEAR(self->operator_type);
-    Py_CLEAR(self->indent_type);
-    Py_CLEAR(self->dedent_type);
-    Py_CLEAR(self->name_type);
-    Py_CLEAR(self->number_type);
-    Py_CLEAR(self->string_type);
-    Py_CLEAR(self->comment_type);
-    Py_CLEAR(self->eof_type);
-    Py_CLEAR(self->error_type);
-    Py_CLEAR(self->encoding_type);
-    Py_CLEAR(self->source);
-    if (!clear_mechanics(self)){ return -1; }
-    if (!clear_parse(self)){ return -1; }
-    if (!clear_encoding(self)){ return -1; }
-    if (!clear_groups(self)){ return -1; }
-    if (!clear_indent(self)){ return -1; }
-    return 0;
-}
-
 static PyMemberDef woosh_tokenizer_type_members[] = {
     {"__weaklistoffset__", T_PYSSIZET, offsetof(WooshTokenizer, weakreflist), READONLY},
     {0}
@@ -106,8 +67,6 @@ static PyType_Slot woosh_tokenizer_spec_slots[] = {
     {Py_tp_dealloc, (destructor)woosh_tokenizer_dealloc},
     {Py_tp_iter, (getiterfunc)woosh_tokenizer_iter},
     {Py_tp_iternext, (iternextfunc)woosh_tokenizer_iternext},
-    {Py_tp_traverse, (traverseproc)woosh_tokenizer_traverse},
-    {Py_tp_clear, (inquiry)woosh_tokenizer_clear},
     {Py_tp_members, woosh_tokenizer_type_members},
     {0, 0},
 };
@@ -116,7 +75,7 @@ static PyType_Spec woosh_tokenizer_spec = {
     "woosh.Tokenizer",
     sizeof(WooshTokenizer),
     0,
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC,
+    Py_TPFLAGS_DEFAULT,
     woosh_tokenizer_spec_slots
 };
 

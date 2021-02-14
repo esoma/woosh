@@ -39,20 +39,6 @@ dealloc_indent(WooshTokenizer *tokenizer)
     lifo_buffer_delete(&tokenizer->indent.stack);
 }
 
-int
-visit_indent(WooshTokenizer *tokenizer, visitproc visit, void *arg)
-{
-    assert(tokenizer);
-    return 1;
-}
-
-int
-clear_indent(WooshTokenizer *tokenizer)
-{
-    assert(tokenizer);
-    return 1;
-}
-
 static size_t
 get_indent(WooshTokenizer *tokenizer)
 {
