@@ -217,7 +217,7 @@ fifo_buffer_delete(FifoBuffer *buffer)
     }
     buffer->size = 0;
     buffer->start = 0;
-    buffer-> end = 0;
+    buffer->end = 0;
 }
 
 #endif
