@@ -7,6 +7,7 @@
 // python
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
+#include <structmember.h>
 // woosh
 #include "modulestate.h"
 #include "woosh/typeobject.h"
@@ -14,6 +15,7 @@
 struct WooshType_
 {
     PyObject_HEAD
+    PyObject *weakreflist;
     PyObject *name;
     unsigned char raw_value;
     PyObject *value;
@@ -91,12 +93,18 @@ woosh_type_repr(WooshType *self)
     return(PyObject *)self->name;
 }
 
+static PyMemberDef woosh_type_type_members[] = {
+    {"__weaklistoffset__", T_PYSSIZET, offsetof(WooshType, weakreflist), READONLY},
+    {0}
+};
+
 static PyType_Slot woosh_type_spec_slots[] = {
     {Py_tp_new, woosh_type_new},
     {Py_tp_dealloc, (destructor)woosh_type_dealloc},
     {Py_tp_getattro, (getattrofunc)woosh_type_getattro},
     {Py_tp_richcompare, (getattrfunc)woosh_type_richcompare},
     {Py_tp_repr, (getattrfunc)woosh_type_repr},
+    {Py_tp_members, woosh_type_type_members},
     {0, 0},
 };
 

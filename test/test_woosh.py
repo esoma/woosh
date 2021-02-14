@@ -9,8 +9,10 @@ import pytest
 # python
 import io
 import itertools
+import gc
 import textwrap
 from typing import Any, Final, Sequence, Tuple, NamedTuple
+import weakref
 
 
 UTF8_BOM: Final = b'\xEF\xBB\xBF'
@@ -18,8 +20,29 @@ UTF8_BOM: Final = b'\xEF\xBB\xBF'
 
 def tokenize(source: bytes) -> Sequence[Token]:
     return list(woosh.tokenize(io.BytesIO(source)))
+    
+    
+def test_gc_weakref():
+    tokenizer = woosh.tokenize(io.BytesIO(b'hello world'))
+    weak_tokenizer = weakref.ref(tokenizer)
+    
+    token = next(tokenizer)
+    weak_token = weakref.ref(token)
+    
+    weak_type = weakref.ref(token.type)
+    
+    del token
+    gc.collect()
+    assert weak_token() is None
+    assert weak_type() is not None
+    
+    token = next(tokenizer)
+    
+    del tokenizer
+    gc.collect()
+    assert weak_tokenizer() is None
 
-
+    
 def test_empty() -> None:
     tokens = tokenize(''.encode('utf-8'))
     expected = [
@@ -91,7 +114,7 @@ def test_encoding_comment(structure: str, encoding: str, newline: str) -> None:
     ]
     assert tokens == expected
 
-    
+
 def test_utf8_bom_encoding() -> None:
     tokens = tokenize(UTF8_BOM)
     expected = [

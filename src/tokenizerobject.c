@@ -6,6 +6,7 @@
 // python
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
+#include <structmember.h>
 // woosh
 #include "lifobuffer.h"
 #include "modulestate.h"
@@ -96,12 +97,18 @@ woosh_tokenizer_clear(WooshTokenizer *self)
     return 0;
 }
 
+static PyMemberDef woosh_tokenizer_type_members[] = {
+    {"__weaklistoffset__", T_PYSSIZET, offsetof(WooshTokenizer, weakreflist), READONLY},
+    {0}
+};
+
 static PyType_Slot woosh_tokenizer_spec_slots[] = {
     {Py_tp_dealloc, (destructor)woosh_tokenizer_dealloc},
     {Py_tp_iter, (getiterfunc)woosh_tokenizer_iter},
     {Py_tp_iternext, (iternextfunc)woosh_tokenizer_iternext},
     {Py_tp_traverse, (traverseproc)woosh_tokenizer_traverse},
     {Py_tp_clear, (inquiry)woosh_tokenizer_clear},
+    {Py_tp_members, woosh_tokenizer_type_members},
     {0, 0},
 };
 

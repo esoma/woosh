@@ -9,6 +9,7 @@
 // python
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
+#include <structmember.h>
 // woosh
 #include "modulestate.h"
 #include "woosh/tokenobject.h"
@@ -16,6 +17,7 @@
 struct WooshToken_
 {
     PyObject_HEAD
+    PyObject *weakreflist;
     WooshType *type;
     PyObject *value;
     PyObject* start_line;
@@ -135,12 +137,18 @@ woosh_token_repr(WooshToken *self)
     );
 }
 
+static PyMemberDef woosh_token_type_members[] = {
+    {"__weaklistoffset__", T_PYSSIZET, offsetof(WooshToken, weakreflist), READONLY},
+    {0}
+};
+
 static PyType_Slot woosh_token_spec_slots[] = {
     {Py_tp_new, woosh_token_new},
     {Py_tp_dealloc, (destructor)woosh_token_dealloc},
     {Py_tp_getattro, (getattrofunc)woosh_token_getattro},
     {Py_tp_richcompare, (getattrfunc)woosh_token_richcompare},
     {Py_tp_repr, (getattrfunc)woosh_token_repr},
+    {Py_tp_members, woosh_token_type_members},
     {0, 0},
 };
 

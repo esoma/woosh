@@ -101,7 +101,8 @@ struct Indent
 struct WooshTokenizer_
 {
     PyObject_HEAD
-
+    PyObject *weakreflist;
+    
     // extension types defined on the module
     PyTypeObject *type;
     PyTypeObject *token;
