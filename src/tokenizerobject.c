@@ -224,7 +224,6 @@ create_tokenizer(PyObject *module, PyObject *source)
     if (!init_encoding(tokenizer)){ goto error; }
     if (!init_groups(tokenizer)){ goto error; }
     if (!init_indent(tokenizer)){ goto error; }
-
     return tokenizer;
 error:
     Py_DECREF(tokenizer);

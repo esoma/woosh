@@ -22,7 +22,7 @@ void
 dealloc_encoding(WooshTokenizer *tokenizer)
 {
     assert(tokenizer);
-    Py_XDECREF(tokenizer->encoding.name);
+    Py_CLEAR(tokenizer->encoding.name);
 }
 
 int

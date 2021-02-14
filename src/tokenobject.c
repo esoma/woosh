@@ -51,12 +51,12 @@ woosh_token_new(PyTypeObject *cls, PyObject *args, PyObject *kwds)
 static void
 woosh_token_dealloc(WooshToken *self)
 {
-    Py_XDECREF(self->type);
-    Py_XDECREF(self->value);
-    Py_XDECREF(self->start_line);
-    Py_XDECREF(self->start_column);
-    Py_XDECREF(self->end_line);
-    Py_XDECREF(self->end_column);
+    Py_CLEAR(self->type);
+    Py_CLEAR(self->value);
+    Py_CLEAR(self->start_line);
+    Py_CLEAR(self->start_column);
+    Py_CLEAR(self->end_line);
+    Py_CLEAR(self->end_column);
 }
 
 // tp_getattro for Token
