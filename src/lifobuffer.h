@@ -137,7 +137,7 @@ lifo_buffer_peek(
 )
 {
     assert(buffer);
-    assert(buffer->buffer >= buffer->top);
+    assert(buffer->top >= buffer->buffer);
     assert(destination);
     assert(size);
     offset *= size;
