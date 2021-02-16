@@ -21,6 +21,11 @@ static WooshToken *iter_tokenizer(WooshTokenizer *);
 static void
 woosh_tokenizer_dealloc(WooshTokenizer *self)
 {
+    if (self->weakreflist)
+    {
+        PyObject_ClearWeakRefs((PyObject *)self);
+    }
+    
     Py_CLEAR(self->type);
     Py_CLEAR(self->token);
     Py_CLEAR(self->newline_type);
@@ -41,6 +46,10 @@ woosh_tokenizer_dealloc(WooshTokenizer *self)
     dealloc_encoding(self);
     dealloc_groups(self);
     dealloc_indent(self);
+    
+    PyTypeObject *type = Py_TYPE(self);
+    type->tp_free(self);
+    Py_DECREF(type);
 }
 
 // tp_iter for Tokenizer
@@ -190,6 +199,7 @@ create_tokenizer(PyObject *module, PyObject *source)
     if (!init_encoding(tokenizer)){ goto error; }
     if (!init_groups(tokenizer)){ goto error; }
     if (!init_indent(tokenizer)){ goto error; }
+
     return tokenizer;
 error:
     Py_DECREF(tokenizer);

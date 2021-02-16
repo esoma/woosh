@@ -53,12 +53,21 @@ woosh_token_new(PyTypeObject *cls, PyObject *args, PyObject *kwds)
 static void
 woosh_token_dealloc(WooshToken *self)
 {
+    if (self->weakreflist)
+    {
+        PyObject_ClearWeakRefs((PyObject *)self);
+    }
+    
     Py_CLEAR(self->type);
     Py_CLEAR(self->value);
     Py_CLEAR(self->start_line);
     Py_CLEAR(self->start_column);
     Py_CLEAR(self->end_line);
     Py_CLEAR(self->end_column);
+    
+    PyTypeObject *type = Py_TYPE(self);
+    type->tp_free(self);
+    Py_DECREF(type);
 }
 
 // tp_getattro for Token

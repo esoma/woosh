@@ -40,8 +40,17 @@ woosh_type_new(PyTypeObject *cls, PyObject *args, PyObject *kwds)
 static void
 woosh_type_dealloc(WooshType *self)
 {
+    if (self->weakreflist)
+    {
+        PyObject_ClearWeakRefs((PyObject *)self);
+    }
+    
     Py_CLEAR(self->name);
     Py_CLEAR(self->value);
+    
+    PyTypeObject *type = Py_TYPE(self);
+    type->tp_free(self);
+    Py_DECREF(type);
 }
 
 // tp_getattro for Type
