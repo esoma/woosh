@@ -240,8 +240,15 @@ review_reverse(WooshTokenizer *tokenizer, size_t offset)
         if (line < start){ return 0; }
         line_length = PyUnicode_GET_LENGTH(*line);
     }
-
-    return PyUnicode_READ_CHAR(*line, line_length - offset);
+    offset = line_length - offset;
+    if (
+        line == (start + tokenizer->mechanics.start.line_index) &&
+        offset < tokenizer->mechanics.start.character_index
+    )
+    {
+        return 0;
+    }
+    return PyUnicode_READ_CHAR(*line, offset);
 }
 
 // adds the line to the buffer, stealing the reference
