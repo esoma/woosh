@@ -46,17 +46,37 @@ check_bom(WooshTokenizer *tokenizer)
     // we may need to return to the start of the source if there is no
     // detectable BOM
     PyObject *source_start = PyObject_CallMethod(tokenizer->source, "tell", 0);
-    if (!source_start){ return 0; }
+    if (!source_start)
+    {
+        if (!PyObject_HasAttrString(tokenizer->source, "tell"))
+        {
+            PyErr_Format(
+                PyExc_TypeError, "expected a file-like object with `tell` method (got %R)",
+                tokenizer->source
+            );
+        }
+        return 0;
+    }
     // the only BOM we need to look for is the UTF8 BOM, so we'll just read
     // enough bytes from the source to check if it is there
     const size_t size_of_utf8_bom = strlen(UTF8_BOM);
     PyObject *line = PyFile_GetLine(tokenizer->source, size_of_utf8_bom);
-    if (!line){ return BOM_ERROR; }
+    if (!line)
+    {
+        if (!PyObject_HasAttrString(tokenizer->source, "readline"))
+        {
+            PyErr_Format(
+                PyExc_TypeError, "expected a file-like object with `readline` method (got %R)",
+                tokenizer->source
+            );
+        }
+        return BOM_ERROR;
+    }
     if (!PyBytes_Check(line))
     {
         Py_DECREF(line);
         PyErr_Format(
-            PyExc_ValueError, "expected %S got %S",
+            PyExc_TypeError, "expected %S got %S",
             &PyBytes_Type, Py_TYPE(line)
         );
         return BOM_ERROR;
@@ -72,6 +92,13 @@ check_bom(WooshTokenizer *tokenizer)
     // characters we read do not go missing from the tokenization process
     if (!PyObject_CallMethod(tokenizer->source, "seek", "O", source_start))
     {
+        if (!PyObject_HasAttrString(tokenizer->source, "seek"))
+        {
+            PyErr_Format(
+                PyExc_TypeError, "expected a file-like object with `seek` method (got %R)",
+                tokenizer->source
+            );
+        }
         return BOM_ERROR;
     }
     return BOM_NONE;
@@ -116,7 +143,18 @@ check_encoding_comment(WooshTokenizer *tokenizer)
         PyObject *line = PyFile_GetLine(tokenizer->source, 0);
         if (!line){ return 0; }
         {
-            PyObject *u_line = PyUnicode_FromEncodedObject(line, "utf-8", 0);
+            PyObject *u_line = 0;
+            if (PyBytes_Check(line))
+            {
+                u_line = PyUnicode_FromEncodedObject(line, "utf-8", 0);
+            }
+            else
+            {
+                PyErr_Format(
+                    PyExc_TypeError, "expected %S got %S",
+                    &PyBytes_Type, Py_TYPE(line)
+                );
+            }
             Py_DECREF(line);
             if (!u_line){ return 0; }
             line = u_line;

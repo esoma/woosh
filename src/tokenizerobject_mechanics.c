@@ -75,6 +75,15 @@ load_line(WooshTokenizer *tokenizer)
     if (tokenizer->mechanics.eof){ return 1; }
     // TODO: make the line size customizeable and allow full read?
     PyObject *line = PyFile_GetLine(tokenizer->source, 1024);
+    if (!PyBytes_Check(line))
+    {
+        PyErr_Format(
+            PyExc_TypeError, "expected %S got %S",
+            &PyBytes_Type, Py_TYPE(line)
+        );
+        Py_DECREF(line);
+        return 0;
+    }
     if (PyBytes_GET_SIZE(line) == 0)
     {
         tokenizer->mechanics.eof = 1;
