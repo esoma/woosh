@@ -90,7 +90,7 @@ INVALID_STRING_LITERALS: Final = (
     ),
     # byte strings may not have ucd literals
     *(
-        (f'{prefix}{q}{ucd}{q}', f'{prefix}{q}{ucd}')
+        (f'{prefix}{q}{ucd}{q}', f'{prefix}{q}{ucd[0]}')
         for prefix, ucd, q in
         itertools.product(
             BYTES_PREFIXES,
