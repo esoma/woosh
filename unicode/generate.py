@@ -38,7 +38,7 @@ with open(WOOSH_DIR / 'unicode/DerivedCoreProperties.txt') as file:
                     continue
             property_codepoints[property].append((min_cp, max_cp))
             
-with open(WOOSH_DIR / 'test/ucd.py', 'w') as f:
+with open(WOOSH_DIR / 'test/python/ucd.py', 'w') as f:
     f.write(textwrap.dedent('''
         # this file is generated from woosh/unicode/generate.py using
         # properties from the unicode character database
