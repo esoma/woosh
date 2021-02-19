@@ -36,6 +36,23 @@ init_mechanics(WooshTokenizer *tokenizer)
     assert(tokenizer->mechanics.end.column == 0);
     assert(tokenizer->mechanics.end.line_index == 0);
     assert(tokenizer->mechanics.end.character_index == 0);
+    
+    tokenizer->mechanics.readline = PyObject_GetAttrString(
+        tokenizer->source,
+        "readline"
+    );
+    if (!tokenizer->mechanics.readline)
+    {
+        PyErr_Format(
+            PyExc_TypeError, "expected a file-like object with `readline` method (got %R)",
+            tokenizer->source
+        );
+        return 0;
+    }
+    // TODO: make the line size customizeable and allow full read?
+    tokenizer->mechanics.readline_bytes = PyLong_FromLong(1024);
+    if (!tokenizer->mechanics.readline_bytes){ return 0; }
+
     return 1;
 }
 
@@ -60,6 +77,8 @@ dealloc_mechanics(WooshTokenizer *tokenizer)
         }
         fifo_buffer_delete(&tokenizer->mechanics.buffer);
     }
+    Py_CLEAR(tokenizer->mechanics.readline);
+    Py_CLEAR(tokenizer->mechanics.readline_bytes);
 }
 
 // reads the next line from the source and puts it in the buffer
@@ -73,8 +92,18 @@ load_line(WooshTokenizer *tokenizer)
     assert(tokenizer->source);
     assert(encoding(tokenizer));
     if (tokenizer->mechanics.eof){ return 1; }
-    // TODO: make the line size customizeable and allow full read?
-    PyObject *line = PyFile_GetLine(tokenizer->source, 1024);
+#if PY_VERSION_HEX >= 0x03090000
+    PyObject *line = PyObject_CallOneArg(
+        tokenizer->mechanics.readline,
+        tokenizer->mechanics.readline_bytes
+    );
+#else
+    PyObject *line = PyObject_CallFunctionObjArgs(
+        tokenizer->mechanics.readline,
+        tokenizer->mechanics.readline_bytes,
+        0
+    );
+#endif
     if (!PyBytes_Check(line))
     {
         PyErr_Format(

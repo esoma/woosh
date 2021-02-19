@@ -41,6 +41,9 @@ struct Mechanics
     // indicates the character before which to stop
     struct Position start;
     struct Position end;
+    // the readline function for the source
+    PyObject *readline;
+    PyObject *readline_bytes;
     // whether the end of the source has been reached
     int eof;
 };
