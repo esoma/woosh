@@ -326,36 +326,40 @@ yield_token(WooshTokenizer *tokenizer, WooshToken *token)
 WooshToken *
 parse(WooshTokenizer *tokenizer)
 {
-again:
+    if (encoding(tokenizer) == 0)
+    {
+        return yield_token(tokenizer, parse_encoding(tokenizer));
+    }
     if (tokenizer->parse.last_token_type != tokenizer->error_type)
     {
-        if (encoding(tokenizer) == 0)
+        while(1)
         {
-            return yield_token(tokenizer, parse_encoding(tokenizer));
-        }
-        {
-            WooshToken *dedent = continue_dedent(tokenizer);
-            if (dedent){ return dedent; }
-            else if (PyErr_Occurred()){ return 0; }
-        }
+            {
+                WooshToken *dedent = continue_dedent(tokenizer);
+                if (dedent){ return dedent; }
+                else if (PyErr_Occurred()){ return 0; }
+            }
 
-        if (end_column(tokenizer) == 0 &&
-            !tokenizer->parse.is_in_line_continuation)
-        {
-            size_t line = end_line(tokenizer);
-            WooshToken *token = parse_line_start(tokenizer);
+            if (end_column(tokenizer) == 0 &&
+                !tokenizer->parse.is_in_line_continuation)
+            {
+                size_t line = end_line(tokenizer);
+                WooshToken *token = parse_line_start(tokenizer);
+                if (!token){ return 0; }
+                if ((PyObject *)token != Py_None){ return yield_token(tokenizer, token); }
+                Py_CLEAR(token);
+                if (line != end_line(tokenizer)){ continue; }
+            }
+
+            if (!advance(tokenizer)){ return 0; }
+            WooshToken *token = parse_line_continue(tokenizer);
             if (!token){ return 0; }
             if ((PyObject *)token != Py_None){ return yield_token(tokenizer, token); }
             Py_CLEAR(token);
-            if (line != end_line(tokenizer)){ goto again; }
+            if (!at_eof(tokenizer)){ continue; }
+            
+            break;
         }
-
-        if (!advance(tokenizer)){ return 0; }
-        WooshToken *token = parse_line_continue(tokenizer);
-        if (!token){ return 0; }
-        if ((PyObject *)token != Py_None){ return yield_token(tokenizer, token); }
-        Py_CLEAR(token);
-        if (!at_eof(tokenizer)){ goto again; }
 
         char open_group = peek_group(tokenizer);
         if (open_group != 0)
