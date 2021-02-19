@@ -335,8 +335,6 @@ advance_over_null(WooshTokenizer *tokenizer, int over_null)
     // newlines uniquely advance our line position in the file
     if (next_c == '\n')
     {
-newline:
-        assert(next_c == '\n');
         tokenizer->mechanics.end.line += 1;
         tokenizer->mechanics.end.column = 0;
     }
@@ -344,30 +342,40 @@ newline:
     {
         tokenizer->mechanics.end.column += 1;
     }
-    // every character advances our character index by 1, but that may put us
-    // beyond the length of the end line in the buffer, so we need to check
-    // that we're not overflowing and if we are then increment to the next
-    // line in the buffer
-    tokenizer->mechanics.end.character_index += 1;
-    PyObject **start;
-    PyObject **end;
-    fifo_buffer_read(&tokenizer->mechanics.buffer, (void **)&start, (void **)&end);
-    PyObject **line = start + tokenizer->mechanics.end.line_index;
-    assert(line < end);
-    size_t line_length = PyUnicode_GET_LENGTH(*line);
-    if (line_length == tokenizer->mechanics.end.character_index)
+    while(1)
     {
-        tokenizer->mechanics.end.line_index += 1;
-        tokenizer->mechanics.end.character_index = 0;
-    }
-    assert(line_length > tokenizer->mechanics.end.character_index);
-    // the \r character is special because if it is followed by a newline then
-    // we will also advance over that newline immediatley
-    if (next_c == '\r')
-    {
-        next_c = peek(tokenizer, 0);
-        if (next_c == 0 && PyErr_Occurred()){ return 0; }
-        if (next_c == '\n'){ goto newline; }
+        // every character advances our character index by 1, but that may put us
+        // beyond the length of the end line in the buffer, so we need to check
+        // that we're not overflowing and if we are then increment to the next
+        // line in the buffer
+        tokenizer->mechanics.end.character_index += 1;
+        PyObject **start;
+        PyObject **end;
+        fifo_buffer_read(&tokenizer->mechanics.buffer, (void **)&start, (void **)&end);
+        PyObject **line = start + tokenizer->mechanics.end.line_index;
+        assert(line < end);
+        size_t line_length = PyUnicode_GET_LENGTH(*line);
+        if (line_length == tokenizer->mechanics.end.character_index)
+        {
+            tokenizer->mechanics.end.line_index += 1;
+            tokenizer->mechanics.end.character_index = 0;
+        }
+        assert(line_length > tokenizer->mechanics.end.character_index);
+        // the \r character is special because if it is followed by a newline then
+        // we will also advance over that newline immediately
+        if (next_c == '\r')
+        {
+            next_c = peek(tokenizer, 0);
+            if (next_c == 0 && PyErr_Occurred()){ return 0; }
+            // repeat for the special \r\n case
+            if (next_c == '\n')
+            {
+                tokenizer->mechanics.end.line += 1;
+                tokenizer->mechanics.end.column = 0;
+                continue;
+            }
+        }
+        break;
     }
     return 1;
 }
@@ -515,14 +523,27 @@ consume(
             // python unicode object to hold the data
             size_t value_size = 0;
             Py_UCS4 maxchar = 127;
-            for (size_t i = 0; i < tokenizer->mechanics.end.line_index; i++)
+            for (size_t i = 0; i <= tokenizer->mechanics.end.line_index; i++)
             {
                 PyObject **i_line = start + i;
-                value_size += PyUnicode_GET_LENGTH(*i_line);
+                if (i == 0)
+                {
+                    value_size = (
+                        PyUnicode_GET_LENGTH(*i_line) -
+                        tokenizer->mechanics.start.character_index
+                    );
+                }
+                else if (i == tokenizer->mechanics.end.line_index)
+                {
+                    value_size += tokenizer->mechanics.end.character_index;
+                }
+                else
+                {
+                    value_size += PyUnicode_GET_LENGTH(*i_line);
+                }
                 Py_UCS4 i_maxchar = PyUnicode_MAX_CHAR_VALUE(*i_line);
                 if (i_maxchar > maxchar){ maxchar = i_maxchar; }
             }
-            value_size += tokenizer->mechanics.end.character_index;
             value = PyUnicode_New(value_size, maxchar);
             if (!value){ goto error; }
             // copy the first buffer line of characters
