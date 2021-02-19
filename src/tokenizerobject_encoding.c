@@ -43,6 +43,7 @@ check_bom(WooshTokenizer *tokenizer)
 {
     assert(tokenizer);
     assert(tokenizer->source);
+    assert(tokenizer->mechanics.readline);
     // we may need to return to the start of the source if there is no
     // detectable BOM
     PyObject *source_start = PyObject_CallMethod(tokenizer->source, "tell", 0);
@@ -60,18 +61,11 @@ check_bom(WooshTokenizer *tokenizer)
     // the only BOM we need to look for is the UTF8 BOM, so we'll just read
     // enough bytes from the source to check if it is there
     const size_t size_of_utf8_bom = strlen(UTF8_BOM);
-    PyObject *line = PyFile_GetLine(tokenizer->source, size_of_utf8_bom);
-    if (!line)
-    {
-        if (!PyObject_HasAttrString(tokenizer->source, "readline"))
-        {
-            PyErr_Format(
-                PyExc_TypeError, "expected a file-like object with `readline` method (got %R)",
-                tokenizer->source
-            );
-        }
-        return BOM_ERROR;
-    }
+    PyObject *line = PyObject_CallFunction(
+        tokenizer->mechanics.readline, "n",
+        size_of_utf8_bom
+    );
+    if (!line){ return BOM_ERROR; }
     if (!PyBytes_Check(line))
     {
         Py_DECREF(line);
