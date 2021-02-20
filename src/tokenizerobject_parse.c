@@ -17,7 +17,8 @@ init_parse(WooshTokenizer *tokenizer)
     assert(tokenizer->parse.last_token_type == 0);
     assert(tokenizer->parse.eof_newline == 0);
     assert(tokenizer->parse.endmarker == 0);
-
+    assert(tokenizer->parse.enable_newline_emit == 0);
+    
     return 1;
 }
 
@@ -43,9 +44,11 @@ parse_newline(WooshTokenizer *tokenizer)
     );
     tokenizer->parse.is_in_line_continuation = 0;
     // we only emit a NEWLINE token when we're not currently in a group (that
-    // is within parenthesis, brackets or braces)
-    if (peek_group(tokenizer) == 0)
+    // is within parenthesis, brackets or braces) and when there is something
+    // meaningful on the line (not just a comment)
+    if (peek_group(tokenizer) == 0 && tokenizer->parse.enable_newline_emit)
     {
+        tokenizer->parse.enable_newline_emit = 0;
         return consume(tokenizer, tokenizer->newline_type, 0);
     }
     discard(tokenizer);
@@ -318,7 +321,15 @@ yield_token(WooshTokenizer *tokenizer, WooshToken *token)
     assert(tokenizer);
     if (token)
     {
-        tokenizer->parse.last_token_type = WooshToken_GET_TYPE(token);
+        WooshType* token_type = WooshToken_GET_TYPE(token);
+        if (token_type == tokenizer->name_type ||
+            token_type == tokenizer->operator_type ||
+            token_type == tokenizer->number_type ||
+            token_type == tokenizer->string_type)
+        {
+            tokenizer->parse.enable_newline_emit = 1;
+        }
+        tokenizer->parse.last_token_type = token_type;
     }
     return token;
 }
@@ -326,12 +337,13 @@ yield_token(WooshTokenizer *tokenizer, WooshToken *token)
 WooshToken *
 parse(WooshTokenizer *tokenizer)
 {
-    if (encoding(tokenizer) == 0)
-    {
-        return yield_token(tokenizer, parse_encoding(tokenizer));
-    }
     if (tokenizer->parse.last_token_type != tokenizer->error_type)
     {
+        if (encoding(tokenizer) == 0)
+        {
+            return yield_token(tokenizer, parse_encoding(tokenizer));
+        }
+        
         while(1)
         {
             {

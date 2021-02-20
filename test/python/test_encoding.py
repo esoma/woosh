@@ -43,7 +43,7 @@ def test_encoding_comment(structure: str, encoding: str, newline: str) -> None:
     expected = [
         woosh.Token(woosh.ENCODING, encoding, 1, 0, 1, 0),
         woosh.Token(woosh.COMMENT, comment, 1, 0, 1, len(comment)),
-        woosh.Token(woosh.NEWLINE, newline, 1, len(comment), 2, 0),
+        woosh.Token(woosh.NEWLINE, '', 2, 0, 2, 0),
         woosh.Token(woosh.EOF, '', 2, 0, 2, 0),
     ]
     assert tokens == expected
@@ -61,7 +61,7 @@ def test_encoding_comment(structure: str, encoding: str, newline: str) -> None:
     expected = [
         woosh.Token(woosh.ENCODING, encoding, 1, 0, 1, 0),
         woosh.Token(woosh.COMMENT, comment, 2, 0, 2, len(comment)),
-        woosh.Token(woosh.NEWLINE, newline, 2, len(comment), 3, 0),
+        woosh.Token(woosh.NEWLINE, '', 3, 0, 3, 0),
         woosh.Token(woosh.EOF, '', 3, 0, 3, 0),
     ]
     assert tokens == expected

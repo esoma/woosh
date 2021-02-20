@@ -64,6 +64,9 @@ struct Parse
     int eof_newline;
     // whether the end marker token has been emitted
     int endmarker;
+    // newlines are only emitted when there are meaningful tokens on the same
+    // line (or multi-line in the case of strings)
+    int enable_newline_emit;
 };
 
 // state for the "encoding" porition of the tokenizer object

@@ -80,7 +80,7 @@ def test_comment(literal: str, newline: str) -> None:
     expected = [
         woosh.Token(woosh.ENCODING, 'utf-8', 1, 0, 1, 0),
         woosh.Token(woosh.COMMENT, literal, 1, 0, *end_comment),
-        woosh.Token(woosh.NEWLINE, newline, *end_comment, *newline_end),
+        woosh.Token(woosh.NEWLINE, '', *newline_end, *newline_end),
         woosh.Token(woosh.EOF, '', *newline_end, *newline_end),
     ]
     assert tokens == expected
