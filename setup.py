@@ -2,6 +2,7 @@
 # python
 import pathlib
 from setuptools import Extension, find_packages, setup
+from setuptools.command.build_ext import build_ext
 
 README_FILE_PATH = pathlib.Path(__file__).parent.absolute().joinpath(
     'README.md',
@@ -29,7 +30,33 @@ tokenizer = Extension(
         'src/typeobject.c',
     ],
     language='c',
+    #undef_macros=['NDEBUG'],
+    #library_dirs=['F:\programs\microprofiler'],
+    #libraries=['micro-profiler_x64'],
+    #extra_compile_args=['/GH', '/Gh', '/Zi'],
+    #extra_link_args=['/INCREMENTAL:NO', '/DEBUG:FULL'],
 )
+
+class BuildExtPgoCommand(build_ext):
+   
+    user_options = build_ext.user_options + [
+        ('pgo-generate', None, 'build with profile guided instrumentation'),
+        ('pgo-use', None, 'build using profile guided optimization'),
+    ]
+    
+    def initialize_options(self):
+        super().initialize_options()
+        self.pgo_generate = None
+        self.pgo_use = None
+        
+    def finalize_options(self):
+        super().finalize_options()
+        for extension in self.extensions:
+            if self.pgo_generate:
+                extension.extra_compile_args.append('/GL')
+                extension.extra_link_args.append('/FASTGENPROFILE')
+            if self.pgo_use:
+                extension.extra_link_args.append('/USEPROFILE')
 
 setup(
     name='woosh',
@@ -47,6 +74,9 @@ setup(
     ],
     url='https://github.com/esoma/woosh',
     packages=find_packages(),
+    cmdclass={
+        'build_ext': BuildExtPgoCommand,
+    },
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
