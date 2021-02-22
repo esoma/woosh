@@ -10,10 +10,15 @@ import textwrap
 import woosh
 
 
-def tokenize(source):
+def tokenize_file_like(source):
     return list(woosh.tokenize(io.BytesIO(source)))
     
+
+def tokenize_bytes(source):
+    return list(woosh.tokenize(source))
     
+    
+@pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
 @pytest.mark.parametrize('indent', [
     ' ',
     '  ',
@@ -22,7 +27,7 @@ def tokenize(source):
     '    \t',
 ])
 @pytest.mark.parametrize('newline', data.NEWLINES)
-def test_indentation(indent, newline) -> None:
+def test_indentation(tokenize, indent, newline):
     tokens = tokenize(textwrap.dedent(f"""
     zero
     {indent}one
@@ -62,6 +67,7 @@ def test_indentation(indent, newline) -> None:
     ]
     assert tokens == expected
     
+@pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
 @pytest.mark.parametrize('indent', [
     ' ',
     '  ',
@@ -70,7 +76,7 @@ def test_indentation(indent, newline) -> None:
     '    \t',
 ])
 @pytest.mark.parametrize('newline', data.NEWLINES)
-def test_indentation_continuation(indent: str, newline: str) -> None:
+def test_indentation_continuation(tokenize, indent, newline) -> None:
     tokens = tokenize(textwrap.dedent(f"""
     one\\
     {indent}two
@@ -85,6 +91,7 @@ def test_indentation_continuation(indent: str, newline: str) -> None:
     assert tokens == expected
 
 
+@pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
 @pytest.mark.parametrize('indent', [
     ' ',
     '  ',
@@ -98,12 +105,7 @@ def test_indentation_continuation(indent: str, newline: str) -> None:
     ('[', ']'),
     ('{', '}'),
 ])
-def test_indentation_groups(
-    indent: str,
-    newline: str,
-    open: str,
-    close: str
-) -> None:
+def test_indentation_groups(tokenize, indent, newline, open, close):
     tokens = tokenize(textwrap.dedent(f"""
     {open}
     {indent}foo
@@ -120,6 +122,7 @@ def test_indentation_groups(
     assert tokens == expected
 
 
+@pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
 @pytest.mark.parametrize('indent', [
     ' ',
     '  ',
@@ -128,7 +131,7 @@ def test_indentation_groups(
     '    \t',
 ])
 @pytest.mark.parametrize('newline', data.NEWLINES)
-def test_indentation_reset(indent: str, newline: str) -> None:
+def test_indentation_reset(tokenize, indent, newline):
     tokens = tokenize(textwrap.dedent(f"""
     zero
     {indent}one
@@ -159,7 +162,8 @@ def test_indentation_reset(indent: str, newline: str) -> None:
     assert tokens == expected
 
 
-def test_tab_size() -> None:
+@pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
+def test_tab_size(tokenize):
     tokens = tokenize(textwrap.dedent(f"""
             spaces
     \ttab

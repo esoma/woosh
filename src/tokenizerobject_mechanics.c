@@ -37,21 +37,29 @@ init_mechanics(WooshTokenizer *tokenizer)
     assert(tokenizer->mechanics.end.line_index == 0);
     assert(tokenizer->mechanics.end.character_index == 0);
     
-    tokenizer->mechanics.readline = PyObject_GetAttrString(
-        tokenizer->source,
-        "readline"
-    );
-    if (!tokenizer->mechanics.readline)
+    if (PyBytes_Check(tokenizer->source))
     {
-        PyErr_Format(
-            PyExc_TypeError, "expected a file-like object with `readline` method (got %R)",
-            tokenizer->source
-        );
-        return 0;
+        assert(tokenizer->mechanics.readline == 0);
+        assert(tokenizer->mechanics.readline_bytes == 0);
     }
-    // TODO: make the line size customizeable and allow full read?
-    tokenizer->mechanics.readline_bytes = PyLong_FromLong(1024);
-    if (!tokenizer->mechanics.readline_bytes){ return 0; }
+    else
+    {
+        tokenizer->mechanics.readline = PyObject_GetAttrString(
+            tokenizer->source,
+            "readline"
+        );
+        if (!tokenizer->mechanics.readline)
+        {
+            PyErr_Format(
+                PyExc_TypeError, "expected a file-like object with `readline` method (got %R)",
+                tokenizer->source
+            );
+            return 0;
+        }
+        // TODO: make the line size customizeable and allow full read?
+        tokenizer->mechanics.readline_bytes = PyLong_FromLong(1024);
+        if (!tokenizer->mechanics.readline_bytes){ return 0; }
+    }
 
     return 1;
 }
@@ -81,17 +89,15 @@ dealloc_mechanics(WooshTokenizer *tokenizer)
     Py_CLEAR(tokenizer->mechanics.readline_bytes);
 }
 
-// reads the next line from the source and puts it in the buffer
+// reads the next line from the source if the source is a "file-like" object
 //
-// returns a truthy value on success, returns falsey if there was an error and
-// sets the python exception
-static int
-load_line(WooshTokenizer *tokenizer)
+// returns 0 with mechanics.eof set if the end of file was reached
+static PyObject *
+load_line_file_like(WooshTokenizer *tokenizer)
 {
     assert(tokenizer);
-    assert(tokenizer->source);
-    assert(encoding(tokenizer));
-    if (tokenizer->mechanics.eof){ return 1; }
+    assert(!tokenizer->mechanics.eof);
+    assert(tokenizer->mechanics.readline);
 #if PY_VERSION_HEX >= 0x03090000
     PyObject *line = PyObject_CallOneArg(
         tokenizer->mechanics.readline,
@@ -116,19 +122,73 @@ load_line(WooshTokenizer *tokenizer)
     if (PyBytes_GET_SIZE(line) == 0)
     {
         tokenizer->mechanics.eof = 1;
-        return 1;
+        return 0;
     }
-    if (!line){ return 0; }
+    
+    PyObject *u_line = PyUnicode_FromEncodedObject(
+        line,
+        encoding(tokenizer),
+        0
+    );
+    Py_DECREF(line);
+    if (!u_line){ return 0; }
+    line = u_line;
+    
+    return line;
+}
+
+// reads the next line from the source if the source is a bytes object
+//
+// returns the unicode version of the source object and sets the mechanics.eof
+// immediately
+static PyObject *
+load_line_bytes(WooshTokenizer *tokenizer)
+{
+    assert(tokenizer);
+    assert(!tokenizer->mechanics.eof);
+    assert(!tokenizer->mechanics.readline);
+    assert(PyBytes_Check(tokenizer->source));
+
+    PyObject *line = PyUnicode_Decode(
+        PyBytes_AS_STRING(tokenizer->source) + tokenizer->encoding.bom_offset,
+        PyBytes_GET_SIZE(tokenizer->source) - tokenizer->encoding.bom_offset,
+        encoding(tokenizer),
+        "strict"
+    );
+    if (line)
     {
-        PyObject *u_line = PyUnicode_FromEncodedObject(
-            line,
-            encoding(tokenizer),
-            0
-        );
-        Py_DECREF(line);
-        if (!u_line){ return 0; }
-        line = u_line;
+        tokenizer->mechanics.eof = 1;
     }
+    return line;
+}
+
+// reads the next line from the source and puts it in the buffer
+//
+// returns a truthy value on success, returns falsey if there was an error and
+// sets the python exception
+static int
+load_line(WooshTokenizer *tokenizer)
+{
+    assert(tokenizer);
+    assert(tokenizer->source);
+    assert(encoding(tokenizer));
+    if (tokenizer->mechanics.eof){ return 1; }
+    
+    PyObject *line;
+    if (tokenizer->mechanics.readline)
+    {
+        line = load_line_file_like(tokenizer);
+    }
+    else
+    {
+        line = load_line_bytes(tokenizer);
+    }
+    if (!line)
+    {
+        if (tokenizer->mechanics.eof){ return 1; }
+        return 0;
+    }
+    
     if (!push(tokenizer, line))
     {
         Py_DECREF(line);
@@ -326,7 +386,17 @@ push(WooshTokenizer *tokenizer, PyObject *line)
 int
 advance_over_null(WooshTokenizer *tokenizer, int over_null)
 {
-    Py_UCS4 next_c = peek(tokenizer, 0);
+    if (tokenizer->mechanics.eof == 2)
+    {
+        return 1;
+    }
+    int is_null = 0;
+    Py_UCS4 next_c = peek_is_null(tokenizer, 0, &is_null);
+    if (next_c == 0 && !is_null && !PyErr_Occurred())
+    {
+        tokenizer->mechanics.eof = 2;
+        return 1;
+    }
     if (next_c == 0 && PyErr_Occurred()){ return 0; }
     if (next_c == 0 && review_reverse(tokenizer, 0) == 0 && !over_null)
     {
@@ -395,17 +465,17 @@ discard(WooshTokenizer *tokenizer)
 {
     assert(tokenizer);
     assert(tokenizer->mechanics.start.line_index == 0);
+    PyObject **start;
+    PyObject **end;
+    fifo_buffer_read(
+        &tokenizer->mechanics.buffer,
+        (void **)&start,
+        (void **)&end
+    );
     // we can delete any lines before the end line, since we'll never look at
     // them again
     if (tokenizer->mechanics.end.line_index != 0)
     {
-        PyObject **start;
-        PyObject **end;
-        fifo_buffer_read(
-            &tokenizer->mechanics.buffer,
-            (void **)&start,
-            (void **)&end
-        );
         for (size_t i = 0; i < tokenizer->mechanics.end.line_index; i++)
         {
             Py_DECREF(*(start + i));
@@ -436,13 +506,12 @@ end_line(WooshTokenizer *tokenizer)
     return tokenizer->mechanics.end.line;
 }
 
-// indicates that there is no source to read (note that this doesn't mean that
-// the buffer is empty, just that all the source has been read into the buffer)
+// indicates that there is nothing left to read from the source
 int
 at_eof(WooshTokenizer *tokenizer)
 {
     assert(tokenizer);
-    return tokenizer->mechanics.eof;
+    return tokenizer->mechanics.eof == 2;
 }
 
 // create a token of the specified type using the contents of the span

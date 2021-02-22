@@ -79,6 +79,9 @@ struct Encoding
     // bytes string of the detected encoding for the source
     // may be 0 if encoding hasn't been detected yet
     PyObject *name;
+    // offset from the start applied to a bytes string source which describes
+    // the size of the bom so that it can be ignored
+    size_t bom_offset;
 };
 
 // state for the "groups" portion of the tokenizer object

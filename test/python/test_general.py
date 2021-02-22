@@ -11,12 +11,16 @@ import weakref
 import woosh
 
 
-def tokenize(source):
+def tokenize_file_like(source):
     return list(woosh.tokenize(io.BytesIO(source)))
+    
+    
+def tokenize_bytes(source):
+    return list(woosh.tokenize(source))
 
 
 def test_gc_weakref():
-    tokenizer = woosh.tokenize(io.BytesIO(b'hello world'))
+    tokenizer = woosh.tokenize(b'hello world')
     weak_tokenizer = weakref.ref(tokenizer)
     
     token = next(tokenizer)
@@ -36,7 +40,8 @@ def test_gc_weakref():
     assert weak_tokenizer() is None
 
     
-def test_empty() -> None:
+@pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
+def test_empty(tokenize):
     tokens = tokenize(''.encode('utf-8'))
     expected = [
         woosh.Token(woosh.ENCODING, 'utf-8', 1, 0, 1, 0),
@@ -46,7 +51,8 @@ def test_empty() -> None:
     assert tokens == expected
     
     
-def test_null_byte() -> None:
+@pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
+def test_null_byte(tokenize):
     tokens = tokenize(b'\x00')
     expected = [
         woosh.Token(woosh.ENCODING, 'utf-8', 1, 0, 1, 0),
@@ -54,8 +60,9 @@ def test_null_byte() -> None:
     ]
     assert tokens == expected
 
+@pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
 @pytest.mark.parametrize('newline', data.NEWLINES)
-def test_line_continuation(newline) -> None:
+def test_line_continuation(tokenize, newline):
     tokens = tokenize(f'xx\\{newline}yy'.encode('utf-8'))
     expected = [
         woosh.Token(woosh.ENCODING, 'utf-8', 1, 0, 1, 0),
@@ -66,13 +73,14 @@ def test_line_continuation(newline) -> None:
     ]
     assert tokens == expected
 
+@pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
 @pytest.mark.parametrize('literal', [
     '# hello',
     '# hello # hello',
     '# line continuation does not continue \\',
 ])
 @pytest.mark.parametrize('newline', data.OPTIONAL_NEWLINES)
-def test_comment(literal: str, newline: str) -> None:
+def test_comment(tokenize, literal, newline):
     tokens = tokenize(f'{literal}{newline}'.encode('utf-8'))
     end_comment = newline_end = 1, len(literal)
     if newline:

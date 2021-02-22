@@ -15,6 +15,7 @@ init_encoding(WooshTokenizer *tokenizer)
 {
     assert(tokenizer);
     assert(tokenizer->encoding.name == 0);
+    assert(tokenizer->encoding.bom_offset == 0);
     return 1;
 }
 
@@ -37,9 +38,9 @@ enum BOM
     BOM_UTF8
 };
 
-// returns a BOM enum describing the BOM for the tokenizer's input
+// returns a BOM enum describing the BOM for the tokenizer's file-like source
 static int
-check_bom(WooshTokenizer *tokenizer)
+check_bom_file_like(WooshTokenizer *tokenizer)
 {
     assert(tokenizer);
     assert(tokenizer->source);
@@ -98,6 +99,39 @@ check_bom(WooshTokenizer *tokenizer)
     return BOM_NONE;
 }
 
+// returns a BOM enum describing the BOM for the tokenizer's bytes source
+static int
+check_bom_bytes(WooshTokenizer *tokenizer)
+{
+    assert(tokenizer);
+    assert(tokenizer->source);
+    assert(!tokenizer->mechanics.readline);
+    assert(PyBytes_Check(tokenizer->source));
+    // the only BOM we need to look for is the UTF8 BOM, so we'll just compare
+    // the start of the byte string to check if it is there
+    const size_t size_of_utf8_bom = strlen(UTF8_BOM);
+    if (PyBytes_GET_SIZE(tokenizer->source) >= size_of_utf8_bom &&
+        memcmp(PyBytes_AS_STRING(tokenizer->source), UTF8_BOM, size_of_utf8_bom) == 0)
+    {
+        tokenizer->encoding.bom_offset = size_of_utf8_bom;
+        return BOM_UTF8;
+    }
+    return BOM_NONE;
+}
+
+// returns a BOM enum describing the BOM for the tokenizer's source
+static int
+check_bom(WooshTokenizer *tokenizer)
+{
+    assert(tokenizer);
+    assert(tokenizer->source);
+    if (tokenizer->mechanics.readline)
+    {
+        return check_bom_file_like(tokenizer);
+    }
+    return check_bom_bytes(tokenizer);
+}
+
 enum ENCODING_COMMENT_PHASE
 {
     // the encoding comment is either found or there is no encoding comment in
@@ -129,37 +163,65 @@ check_encoding_comment(WooshTokenizer *tokenizer)
     assert(tokenizer->source);
     PyObject *encoding = 0;
     // only the first two lines may have an encoding comment
+    size_t bytes_line_start = tokenizer->encoding.bom_offset;
     for (size_t i = 0; i < 2; i++)
     {
         assert(!encoding);
+        PyObject *line;
         // if we haven't found the encoding yet then the line we're looking at
         // must be utf-8 compatible, so we can decode it as such
-        PyObject *line = PyFile_GetLine(tokenizer->source, 0);
-        if (!line){ return 0; }
+        if (tokenizer->mechanics.readline)
         {
-            PyObject *u_line = 0;
-            if (PyBytes_Check(line))
+            line = PyFile_GetLine(tokenizer->source, 0);
+            if (!line){ return 0; }
             {
-                u_line = PyUnicode_FromEncodedObject(line, "utf-8", 0);
+                PyObject *u_line = 0;
+                if (PyBytes_Check(line))
+                {
+                    u_line = PyUnicode_FromEncodedObject(line, "utf-8", 0);
+                }
+                else
+                {
+                    PyErr_Format(
+                        PyExc_TypeError, "expected %S got %S",
+                        &PyBytes_Type, Py_TYPE(line)
+                    );
+                }
+                Py_DECREF(line);
+                if (!u_line){ return 0; }
+                line = u_line;
             }
-            else
-            {
-                PyErr_Format(
-                    PyExc_TypeError, "expected %S got %S",
-                    &PyBytes_Type, Py_TYPE(line)
-                );
-            }
-            Py_DECREF(line);
-            if (!u_line){ return 0; }
-            line = u_line;
+            // we need to add the line to the tokenizer buffer so that it can
+            // be tokenized normally later
+            if (!push(tokenizer, line)){ return 0; }
+            Py_INCREF(line);
         }
-        // we need to add the line to the tokenizer buffer so that it can be
-        // tokenized normally later -- this is also nice because it means the
-        // tokenizer now owns the line object and we're just borrowing it
-        if (!push(tokenizer, line))
+        else
         {
-            Py_DECREF(line);
-            return 0;
+            assert(PyBytes_Check(tokenizer->source));
+            const char *source = PyBytes_AS_STRING(tokenizer->source);
+            size_t line_start = bytes_line_start;
+            size_t line_end = line_start;
+            while(1)
+            {
+                if (source[line_end] == '\n')
+                {
+                    line_end += 1;
+                    break;
+                }
+                line_end += 1;
+                if (line_end >= PyBytes_GET_SIZE(tokenizer->source))
+                {
+                    line_end = PyBytes_GET_SIZE(tokenizer->source);
+                    break;
+                }
+            }
+            line = PyUnicode_FromStringAndSize(
+                source + line_start,
+                line_end - line_start
+            );
+            if (!line){ return 0; }
+            bytes_line_start = line_end;
         }
         // this regular expression describes how the comment must be in order
         // for it to be recognized as an encoding comment
@@ -168,7 +230,11 @@ check_encoding_comment(WooshTokenizer *tokenizer)
         int phase = SEEK_COMMENT;
         size_t line_length = PyUnicode_GET_LENGTH(line);
         int line_kind = PyUnicode_KIND(line);
-        if (line_length == 0){ break; }
+        if (line_length == 0)
+        {
+            Py_DECREF(line);
+            break;
+        }
         void *line_data = PyUnicode_DATA(line);
         size_t encoding_start_i = 0;
         size_t encoding_end_i = 0;
@@ -307,10 +373,16 @@ check_encoding_comment(WooshTokenizer *tokenizer)
                     encoding_start_i,
                     encoding_end_i
                 );
-                if (!encoding){ return 0; }
+                if (!encoding)
+                {
+                    Py_DECREF(line);
+                    return 0;
+                }
             }
+            Py_DECREF(line);
             break;
         }
+        Py_DECREF(line);
     }
     if (!encoding)
     {
@@ -449,7 +521,7 @@ parse_encoding(WooshTokenizer *tokenizer)
                 return error_format(
                     tokenizer,
                     "invalid encoding: %R",
-                    tokenizer->encoding
+                    tokenizer->encoding.name
                 );
             }
         }

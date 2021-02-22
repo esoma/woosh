@@ -7,10 +7,15 @@ import io
 import woosh
 
 
-def tokenize(source):
+def tokenize_file_like(source):
     return list(woosh.tokenize(io.BytesIO(source)))
+    
+
+def tokenize_bytes(source):
+    return list(woosh.tokenize(source))
 
 
+@pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
 @pytest.mark.parametrize('literal', [
     '+', '+=',
     '-', '-=', '->',
@@ -31,7 +36,7 @@ def tokenize(source):
     ':',
     ';',
 ])
-def test_valid_operator(literal):
+def test_valid_operator(tokenize, literal):
     tokens = tokenize(literal.encode('utf-8'))
     expected = [
         woosh.Token(woosh.ENCODING, 'utf-8', 1, 0, 1, 0),
@@ -42,12 +47,13 @@ def test_valid_operator(literal):
     assert tokens == expected
     
     
+@pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
 @pytest.mark.parametrize('literal, expected', [
     ('(', ')'),
     ('[', ']'),
     ('{', '}'),
 ])
-def test_valid_operator_groups(literal: str, expected: str) -> None:
+def test_valid_operator_groups(tokenize, literal, expected):
     tokens = tokenize(literal.encode('utf-8'))
     expected = [
         woosh.Token(woosh.ENCODING, 'utf-8', 1, 0, 1, 0),
@@ -57,8 +63,9 @@ def test_valid_operator_groups(literal: str, expected: str) -> None:
     assert tokens == expected
     
     
+@pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
 @pytest.mark.parametrize('literal', ['?', '!', '$', ')', ']', '}'])
-def test_invalid_operator(literal: str) -> None:
+def test_invalid_operator(tokenize, literal):
     tokens = tokenize(literal.encode('utf-8'))
     expected = [
         woosh.Token(woosh.ENCODING, 'utf-8', 1, 0, 1, 0),
@@ -67,7 +74,8 @@ def test_invalid_operator(literal: str) -> None:
     assert tokens == expected
     
     
-def test_two_dots() -> None:
+@pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
+def test_two_dots(tokenize):
     tokens = tokenize(b'..')
     expected = [
         woosh.Token(woosh.ENCODING, 'utf-8', 1, 0, 1, 0),
@@ -78,7 +86,9 @@ def test_two_dots() -> None:
     ]
     assert tokens == expected
     
-def test_four_dots() -> None:
+
+@pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
+def test_four_dots(tokenize):
     tokens = tokenize(b'....')
     expected = [
         woosh.Token(woosh.ENCODING, 'utf-8', 1, 0, 1, 0),
@@ -89,8 +99,9 @@ def test_four_dots() -> None:
     ]
     assert tokens == expected
     
+@pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
 @pytest.mark.parametrize('character', ['*', '/', '='])
-def test_double_and_one_operator(character: str) -> None:
+def test_double_and_one_operator(tokenize, character):
     tokens = tokenize((character * 3).encode('utf-8'))
     expected = [
         woosh.Token(woosh.ENCODING, 'utf-8', 1, 0, 1, 0),
@@ -102,12 +113,13 @@ def test_double_and_one_operator(character: str) -> None:
     assert tokens == expected
 
 
+@pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
 @pytest.mark.parametrize('open, close', [
     ('(', ')'),
     ('[', ']'),
     ('{', '}'),
 ])
-def test_balanced_open_close(open: str, close: str) -> None:
+def test_balanced_open_close(tokenize, open, close):
     tokens = tokenize(f'{open}{close}'.encode('utf-8'))
     expected = [
         woosh.Token(woosh.ENCODING, 'utf-8', 1, 0, 1, 0),
@@ -119,12 +131,13 @@ def test_balanced_open_close(open: str, close: str) -> None:
     assert tokens == expected
 
 
+@pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
 @pytest.mark.parametrize('open, close', [
     ('(', ')'),
     ('[', ']'),
     ('{', '}'),
 ])
-def test_exceed_cpython_group_depth(open: str, close: str) -> None:
+def test_exceed_cpython_group_depth(tokenize, open, close):
     # cpython has a maximum group nesting of 200, make sure we can exceed that
     MAX_GROUPS = 200 + 1
     tokens = tokenize((
@@ -147,12 +160,13 @@ def test_exceed_cpython_group_depth(open: str, close: str) -> None:
     assert tokens == expected
 
 
+@pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
 @pytest.mark.parametrize('open,close', [
     ('(', ']'), ('(', '}'),
     ('[', ')'), ('[', '}'),
     ('{', ')'), ('{', ']'),
 ])
-def test_different_open_close(open: str, close: str) -> None:
+def test_different_open_close(tokenize, open, close):
     tokens = tokenize(f'{open}{close}'.encode('utf-8'))
     expected = [
         woosh.Token(woosh.ENCODING, 'utf-8', 1, 0, 1, 0),

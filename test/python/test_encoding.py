@@ -10,10 +10,15 @@ import woosh
 UTF8_BOM = b'\xEF\xBB\xBF'
 
 
-def tokenize(source):
+def tokenize_file_like(source):
     return list(woosh.tokenize(io.BytesIO(source)))
     
     
+def tokenize_bytes(source):
+    return list(woosh.tokenize(source))
+    
+    
+@pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
 @pytest.mark.parametrize('structure', [
     '# coding={encoding}',
     '# -*- coding: {encoding} -*-',
@@ -27,7 +32,7 @@ def tokenize(source):
     'iso-8859-15',
 ])
 @pytest.mark.parametrize('newline', ['\n', '\r\n'])
-def test_encoding_comment(structure: str, encoding: str, newline: str) -> None:
+def test_encoding_comment(tokenize, structure, encoding, newline):
     comment = structure.format(encoding=encoding)
     # encoding is on first line with no following line
     tokens = tokenize(comment.encode('utf8'))
@@ -76,7 +81,8 @@ def test_encoding_comment(structure: str, encoding: str, newline: str) -> None:
     assert tokens == expected
     
     
-def test_invalid_encoding_comment() -> None:
+@pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
+def test_invalid_encoding_comment(tokenize):
     tokens = tokenize('# coding=invalid'.encode('utf-8'))
     expected = [
         woosh.Token(woosh.ERROR, "invalid encoding: b'invalid'", 1, 0, 1, 0),
@@ -84,7 +90,8 @@ def test_invalid_encoding_comment() -> None:
     assert tokens == expected
     
     
-def test_utf8_bom_encoding() -> None:
+@pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
+def test_utf8_bom_encoding(tokenize):
     tokens = tokenize(UTF8_BOM)
     expected = [
         woosh.Token(woosh.ENCODING, 'utf-8', 1, 0, 1, 0),
@@ -94,12 +101,13 @@ def test_utf8_bom_encoding() -> None:
     assert tokens == expected
     
     
+@pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
 @pytest.mark.parametrize('encoding', [
     'ascii',
     'latin-1',
     'iso-8859-15',
 ])
-def test_utf8_bom_encoding_non_utf8_comment_encoding(encoding: str) -> None:
+def test_utf8_bom_encoding_non_utf8_comment_encoding(tokenize, encoding):
     source = UTF8_BOM + f'# coding={encoding}'.encode('utf-8')
     tokens = tokenize(source)
     expected = [
@@ -108,11 +116,12 @@ def test_utf8_bom_encoding_non_utf8_comment_encoding(encoding: str) -> None:
     assert tokens == expected
 
 
+@pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
 @pytest.mark.parametrize('encoding', [
     'utf-8',
     'utf8',
 ])
-def test_utf8_bom_encoding_utf8_comment_encoding(encoding: str) -> None:
+def test_utf8_bom_encoding_utf8_comment_encoding(tokenize, encoding):
     comment = f'# coding={encoding}'
     source = UTF8_BOM + comment.encode('utf-8')
     tokens = tokenize(source)
