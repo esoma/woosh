@@ -120,7 +120,7 @@ woosh_token_richcompare(WooshToken *self, PyObject *unk_other, int op)
         WooshToken *other = (WooshToken*)unk_other;
         int cmp = (
             PyObject_RichCompareBool((PyObject *)self->type, (PyObject *)other->type, Py_EQ) &&
-            PyObject_RichCompareBool(self->value, other->value, Py_EQ) &&
+            PyUnicode_Compare(self->value, other->value) == 0 &&
             PyObject_RichCompareBool(self->start_line, other->start_line, Py_EQ) &&
             PyObject_RichCompareBool(self->start_column, other->start_column, Py_EQ) &&
             PyObject_RichCompareBool(self->end_line, other->end_line, Py_EQ) &&
