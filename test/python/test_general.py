@@ -4,9 +4,7 @@ import data
 # pytest
 import pytest
 # python
-import gc
 import io
-import weakref
 # woosh
 import woosh
 
@@ -17,27 +15,6 @@ def tokenize_file_like(source):
     
 def tokenize_bytes(source):
     return list(woosh.tokenize(source))
-
-
-def test_gc_weakref():
-    tokenizer = woosh.tokenize(b'hello world')
-    weak_tokenizer = weakref.ref(tokenizer)
-    
-    token = next(tokenizer)
-    weak_token = weakref.ref(token)
-    
-    weak_type = weakref.ref(token.type)
-    
-    del token
-    gc.collect()
-    assert weak_token() is None
-    assert weak_type() is not None
-    
-    token = next(tokenizer)
-    
-    del tokenizer
-    gc.collect()
-    assert weak_tokenizer() is None
 
     
 @pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])

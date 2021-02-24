@@ -89,6 +89,17 @@ dealloc_mechanics(WooshTokenizer *tokenizer)
     Py_CLEAR(tokenizer->mechanics.readline_bytes);
 }
 
+void
+traverse_mechanics(WooshTokenizer *self, visitproc visit, void *arg)
+{
+    Py_VISIT(self->mechanics.readline);
+}
+
+void clear_mechanics(WooshTokenizer *self)
+{
+    Py_CLEAR(self->mechanics.readline);
+}
+
 // reads the next line from the source if the source is a "file-like" object
 //
 // returns 0 with mechanics.eof set if the end of file was reached
