@@ -4,10 +4,8 @@ import pathlib
 from setuptools import Extension, find_packages, setup
 from setuptools.command.build_ext import build_ext
 
-README_FILE_PATH = pathlib.Path(__file__).parent.absolute().joinpath(
-    'README.md',
-)
-with open(README_FILE_PATH) as f:
+REPO = pathlib.Path(__file__).parent.absolute()
+with open(REPO / 'README.md') as f:
     long_description = f.read()
     
 tokenizer = Extension(
@@ -42,21 +40,31 @@ class BuildExtPgoCommand(build_ext):
     user_options = build_ext.user_options + [
         ('pgo-generate', None, 'build with profile guided instrumentation'),
         ('pgo-use', None, 'build using profile guided optimization'),
+        ('pgo-data=', None, 'the pgo data location/file'),
     ]
     
     def initialize_options(self):
         super().initialize_options()
         self.pgo_generate = None
         self.pgo_use = None
+        self.pgo_data = None
         
     def finalize_options(self):
         super().finalize_options()
         for extension in self.extensions:
             if self.pgo_generate:
                 extension.extra_compile_args.append('/GL')
-                extension.extra_link_args.append('/FASTGENPROFILE')
+                extension.extra_link_args.append(
+                    f'/FASTGENPROFILE:PGD={self.pgo_data}'
+                    if self.pgo_data else 
+                    '/FASTGENPROFILE'
+                )
             if self.pgo_use:
-                extension.extra_link_args.append('/USEPROFILE')
+                extension.extra_link_args.append(
+                    f'/USEPROFILE:PGD={self.pgo_data}'
+                    if self.pgo_data else 
+                    '/USEPROFILE'
+                )
 
 setup(
     name='woosh',

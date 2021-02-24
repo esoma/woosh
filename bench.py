@@ -24,7 +24,7 @@ import gc
 
 runner = pyperf.Runner()
 
-DATA = pathlib.Path(__file__).parent.absolute() / '../sample/'
+DATA = pathlib.Path(__file__).parent.absolute() / 'sample'
 DATA_FILES = os.listdir(DATA)
 
 for data_file in DATA_FILES:
@@ -36,7 +36,7 @@ for data_file in DATA_FILES:
         
     def test_woosh():
         data.seek(0)
-        for token in woosh.tokenize(data):
+        for token in woosh.tokenize(source):
             pass
     runner.bench_func(f'woosh-{data_file}', test_woosh)
     '''
