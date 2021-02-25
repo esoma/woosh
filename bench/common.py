@@ -15,8 +15,6 @@ def bench(func):
         directory = pathlib.Path(directory)
         for file in files:
             data_file = directory / file
-            if data_file.name != 'abc.py':
-                continue
             with open(data_file, 'rb') as f:
                 source = f.read()
                 # this is for the Cython tokenizer, which chokes if it encounters

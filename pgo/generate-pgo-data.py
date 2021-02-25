@@ -12,6 +12,8 @@ import pathlib
 DATA = (pathlib.Path(__file__).parent.absolute() / '../sample').resolve()
 
 for directory, _, files in os.walk(DATA):
+    if directory.endswith('contrived'):
+        continue
     directory = pathlib.Path(directory)
     for file in files:
         data_file = directory / file

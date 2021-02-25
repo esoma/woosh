@@ -4,9 +4,9 @@ import pathlib
 # woosh
 import woosh
 
-SAMPLE_DIR = pathlib.Path(__file__).parent.absolute() / '../../../sample/'
+SAMPLE_DIR = pathlib.Path(__file__).parent.absolute() / '../../' / '../../' / 'sample'
 def test():
-    with open('F:\\code\\woosh\\sample\\stdlib\\binhex.py', 'rb') as f:
+    with open(SAMPLE_DIR / 'stdlib/binhex.py', 'rb') as f:
         tokens = list(woosh.tokenize(f))
     for token, expected in zip(tokens, EXPECTED):
         assert token == expected
