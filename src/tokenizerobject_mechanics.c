@@ -199,7 +199,6 @@ load_line(WooshTokenizer *tokenizer)
         if (tokenizer->mechanics.eof){ return 1; }
         return 0;
     }
-    
     if (!push(tokenizer, line))
     {
         Py_DECREF(line);
@@ -621,8 +620,15 @@ consume(
                 {
                     value_size += PyUnicode_GET_LENGTH(*i_line);
                 }
-                Py_UCS4 i_maxchar = PyUnicode_MAX_CHAR_VALUE(*i_line);
-                if (i_maxchar > maxchar){ maxchar = i_maxchar; }
+                // it's possible that if a multiline token ends at the eof
+                // without a newline that the end.line_index will go beyond
+                // what we actually have in the buffer, there is nothing there
+                // so we just ignore it
+                if (i_line < end)
+                {
+                    Py_UCS4 i_maxchar = PyUnicode_MAX_CHAR_VALUE(*i_line);
+                    if (i_maxchar > maxchar){ maxchar = i_maxchar; }
+                }
             }
             value = PyUnicode_New(value_size, maxchar);
             if (!value){ goto error; }
