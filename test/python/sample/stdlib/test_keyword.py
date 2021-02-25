@@ -1,13 +1,24 @@
 
 # python
+import io
 import pathlib
+# pytest
+import pytest
 # woosh
 import woosh
 
+def tokenize_file_like(source):
+    return list(woosh.tokenize(io.BytesIO(source)))
+
+def tokenize_bytes(source):
+    return list(woosh.tokenize(source))
+
 SAMPLE_DIR = pathlib.Path(__file__).parent.absolute() / '../../' / '../../' / 'sample'
-def test():
+
+@pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
+def test(tokenize):
     with open(SAMPLE_DIR / 'stdlib/keyword.py', 'rb') as f:
-        tokens = list(woosh.tokenize(f))
+        tokens = tokenize(f.read())
     for token, expected in zip(tokens, EXPECTED):
         assert token == expected
 

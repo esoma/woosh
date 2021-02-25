@@ -29,14 +29,25 @@ for directory, _, files in os.walk(SAMPLE_DIR):
         )
         template = textwrap.dedent(f"""
             # python
+            import io
             import pathlib
+            # pytest
+            import pytest
             # woosh
             import woosh
+            
+            def tokenize_file_like(source):
+                return list(woosh.tokenize(io.BytesIO(source)))
+                
+            def tokenize_bytes(source):
+                return list(woosh.tokenize(source))
 
             SAMPLE_DIR = pathlib.Path(__file__).parent.absolute() / '../../' / {'../' * rel!r} / 'sample'
-            def test():
+            
+            @pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
+            def test(tokenize):
                 with open(SAMPLE_DIR / {str(sample_file_relative_sample)!r}, 'rb') as f:
-                    tokens = list(woosh.tokenize(f))
+                    tokens = tokenize(f.read())
                 for token, expected in zip(tokens, EXPECTED):
                     assert token == expected
                         
