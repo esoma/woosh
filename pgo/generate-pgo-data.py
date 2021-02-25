@@ -9,13 +9,15 @@ import io
 import os
 import pathlib
 
-DATA = pathlib.Path(__file__).parent.absolute() / '../sample'
-DATA_FILES = os.listdir(DATA)
+DATA = (pathlib.Path(__file__).parent.absolute() / '../sample').resolve()
 
-for data_file in DATA_FILES:
-    with open(DATA / data_file, 'rb') as f:
-        source_bytes = f.read()
-        source_file_like = io.BytesIO(source_bytes)
-    print(data_file)
-    list(woosh.tokenize(source_bytes))
-    list(woosh.tokenize(source_file_like))
+for directory, _, files in os.walk(DATA):
+    directory = pathlib.Path(directory)
+    for file in files:
+        data_file = directory / file
+        with open(data_file, 'rb') as f:
+            source_bytes = f.read()
+            source_file_like = io.BytesIO(source_bytes)
+        print(data_file.relative_to(DATA))
+        list(woosh.tokenize(source_bytes))
+        list(woosh.tokenize(source_file_like))
