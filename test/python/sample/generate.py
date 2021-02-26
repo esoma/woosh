@@ -56,10 +56,10 @@ for directory, _, files in os.walk(SAMPLE_DIR):
             EXPECTED = [\n{expected}
             ]
         """)
-        test_file = (
-            DIR / sample_file_relative_sample.parent /
-            f'test_{sample_file_relative_sample.name}'
-        )
-        test_file.parent.mkdir(parents=True, exist_ok=True)
+        test_file_dir = DIR / sample_file_relative_sample.parent
+        test_file_dir.mkdir(parents=True, exist_ok=True)
+        with open(test_file_dir / '__init__.py', 'w') as f:
+            pass
+        test_file = test_file_dir / f'test_{sample_file_relative_sample.name}'
         with open(test_file, 'wb') as f:
             f.write(template.encode(tokens[0].value))
