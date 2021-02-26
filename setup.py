@@ -33,14 +33,17 @@ tokenizer = Extension(
     #libraries=['micro-profiler_x64'],
     #extra_compile_args=['/GH', '/Gh', '/Zi'],
     #extra_link_args=['/INCREMENTAL:NO', '/DEBUG:FULL'],
+    #extra_compile_args=['-fprofile-arcs', '-ftest-coverage'],
+    #extra_link_args=['-fprofile-arcs'],
 )
 
-class BuildExtPgoCommand(build_ext):
+class BuildExtCommand(build_ext):
    
     user_options = build_ext.user_options + [
         ('pgo-generate', None, 'build with profile guided instrumentation'),
         ('pgo-use', None, 'build using profile guided optimization'),
         ('pgo-data=', None, 'the pgo data location/file'),
+        ('gcov', None, 'build with gcov instrumentation'),
     ]
     
     def initialize_options(self):
@@ -48,10 +51,15 @@ class BuildExtPgoCommand(build_ext):
         self.pgo_generate = None
         self.pgo_use = None
         self.pgo_data = None
+        self.gcov = None
         
     def finalize_options(self):
         super().finalize_options()
         for extension in self.extensions:
+            if self.gcov:
+                extension.extra_compile_args.append('-fprofile-arcs')
+                extension.extra_compile_args.append('-ftest-coverage')
+                extension.extra_link_args.append('-fprofile-arcs')
             if self.pgo_generate:
                 extension.extra_compile_args.append('/GL')
                 extension.extra_link_args.append(
@@ -83,7 +91,7 @@ setup(
     url='https://github.com/esoma/woosh',
     packages=find_packages(),
     cmdclass={
-        'build_ext': BuildExtPgoCommand,
+        'build_ext': BuildExtCommand,
     },
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',

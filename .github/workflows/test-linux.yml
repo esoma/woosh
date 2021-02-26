@@ -32,8 +32,11 @@ jobs:
         
     - name: Build
       run: |
-        python setup.py install
+        python setup.py build_ext --gcov install
         
     - name: Test
       run: |
         pytest
+
+    - name: Codecov
+      uses: codecov/codecov-action@v1.2.1
