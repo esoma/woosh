@@ -28,6 +28,8 @@ for directory, _, files in os.walk(SAMPLE_DIR):
             for token in tokens
         )
         template = textwrap.dedent(f"""
+            # this file was generated using test/python/sample/generate.py
+        
             # python
             import io
             import pathlib

@@ -1,4 +1,6 @@
 
+# this file was generated using test/python/sample/generate.py
+
 # python
 import io
 import pathlib
