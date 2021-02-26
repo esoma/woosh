@@ -149,5 +149,22 @@ def test_mismatched_group(tokenize, open, close, expected):
     ]
     assert tokens == expected
 
-
     
+@pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
+def test_mismatched_dedent(tokenize):
+    tokens = tokenize(f'''
+    indent
+  dedent
+    '''.encode('utf-8'))
+    expected = [
+        woosh.Token(woosh.ENCODING, 'utf-8', 1, 0, 1, 0),
+        woosh.Token(woosh.INDENT, '    ', 2, 0, 2, 4),
+        woosh.Token(woosh.NAME, 'indent', 2, 4, 2, 10),
+        woosh.Token(woosh.NEWLINE, '\n', 2, 10, 3, 0),
+        woosh.Token(woosh.ERROR, '  ', 3, 0, 3, 2),
+        woosh.Token(woosh.NAME, 'dedent', 3, 2, 3, 8),
+        woosh.Token(woosh.NEWLINE, '\n', 3, 8, 4, 0),
+        woosh.Token(woosh.DEDENT, '', 4, 4, 4, 4),
+        woosh.Token(woosh.EOF, '', 4, 4, 4, 4),
+    ]
+    assert tokens == expected
