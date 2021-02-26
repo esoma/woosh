@@ -2,7 +2,7 @@
 # this module contains a collection of valid and invalid tokens or bits of
 # source to be used for testing
 
-import ucd
+from . import ucd
 
 # python
 import itertools

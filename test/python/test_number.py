@@ -1,5 +1,5 @@
 
-import data
+from . import data
 
 # pytest
 import pytest
