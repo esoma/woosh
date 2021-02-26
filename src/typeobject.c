@@ -228,7 +228,7 @@ WooshType_New(PyObject *name, PyObject *value)
         return PyErr_Format(PyExc_TypeError, "value must be int");
     }
     long raw_value = PyLong_AsLong(value);
-    if (raw_value == -1 && PyErr_Occurred){ return 0; }
+    if (raw_value == -1 && PyErr_Occurred()){ return 0; }
     if (raw_value < 0 || raw_value > 255)
     {
         return PyErr_Format(PyExc_ValueError, "value must be between 0 and 255");
