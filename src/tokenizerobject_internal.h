@@ -186,6 +186,7 @@ WooshToken *error_format(WooshTokenizer *, const char *, ...);
 // tokenizerobject_groups.c
 int init_groups(WooshTokenizer *);
 void dealloc_groups(WooshTokenizer *);
+void pop_group(WooshTokenizer *);
 char peek_group(WooshTokenizer *);
 WooshToken *parse_open_operator(WooshTokenizer *);
 WooshToken *parse_close_operator(WooshTokenizer *);

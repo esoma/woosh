@@ -30,10 +30,9 @@ def test_valid_string_literal(literal):
 @pytest.mark.parametrize('literal, error', data.INVALID_STRING_LITERALS)
 def test_invalid_string_literal(literal, error):
     tokens = tokenize(literal.encode('utf-8'))
-    end_line = literal.count('\n') + 1
     end_column = len(error.split('\n')[-1])
     expected = [
         woosh.Token(woosh.ENCODING, 'utf-8', 1, 0, 1, 0),
-        woosh.Token(woosh.ERROR, error, 1, 0, end_line, end_column),
+        woosh.Token(woosh.ERROR, error, 1, 0, 1, end_column),
     ]
     assert tokens == expected

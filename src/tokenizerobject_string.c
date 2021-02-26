@@ -200,7 +200,6 @@ parse_string(
                 {
                     if (next_c == '\n')
                     {
-                        if (!advance(tokenizer)){ return 0; }
                         return error(tokenizer);
                     }
                     else if (next_c == '\r')
@@ -209,7 +208,6 @@ parse_string(
                         if (next_next_c == 0 && PyErr_Occurred()){ return 0; }
                         if (next_next_c == '\n')
                         {
-                            if (!advance(tokenizer)){ return 0; }
                             return error(tokenizer);
                         }
                     }

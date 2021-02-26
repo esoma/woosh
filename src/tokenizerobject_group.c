@@ -54,7 +54,7 @@ push_group(WooshTokenizer *tokenizer, char c)
 }
 
 // remove the top group character from the stack
-static void
+void
 pop_group(WooshTokenizer *tokenizer)
 {
     assert(tokenizer);

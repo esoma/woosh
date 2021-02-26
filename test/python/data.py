@@ -85,7 +85,7 @@ INVALID_STRING_LITERALS: Final = (
     # 'hello
     # world'
     *(
-        (f'{q}hello{newline}world{q}', f'{q}hello{newline}')
+        (f'{q}hello{newline}world{q}', f'{q}hello')
         for q, newline in itertools.product(ONELINE_STRING_QUOTES, NEWLINES)
     ),
     # byte strings may not have ucd literals

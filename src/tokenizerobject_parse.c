@@ -379,6 +379,7 @@ parse(WooshTokenizer *tokenizer)
         char open_group = peek_group(tokenizer);
         if (open_group != 0)
         {
+            pop_group(tokenizer);
             char close_group = 0;
             switch(open_group)
             {
