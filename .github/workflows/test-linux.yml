@@ -37,7 +37,7 @@ jobs:
         
     - name: Build
       run: |
-        python setup.py build_ext --gcov --enable-assert install
+        python setup.py build_ext --gcov --no-optimization -UNDEBUG install
         
     - name: Test
       run: |
