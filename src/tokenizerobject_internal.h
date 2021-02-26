@@ -167,7 +167,7 @@ int is_name_continue(Py_UCS4);
 // tokenizerobject_mechanics.c
 int init_mechanics(WooshTokenizer *);
 void dealloc_mechanics(WooshTokenizer *);
-void traverse_mechanics(WooshTokenizer *, visitproc, void *);
+int traverse_mechanics(WooshTokenizer *, visitproc, void *);
 void clear_mechanics(WooshTokenizer *);
 Py_UCS4 peek_is_null(WooshTokenizer *, size_t, int *);
 Py_UCS4 peek(WooshTokenizer *, size_t);

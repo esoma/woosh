@@ -89,13 +89,14 @@ dealloc_mechanics(WooshTokenizer *tokenizer)
     Py_CLEAR(tokenizer->mechanics.readline_bytes);
 }
 
-void
+int
 traverse_mechanics(WooshTokenizer *self, visitproc visit, void *arg)
 {
     Py_VISIT(self->mechanics.readline);
 }
 
-void clear_mechanics(WooshTokenizer *self)
+void
+clear_mechanics(WooshTokenizer *self)
 {
     Py_CLEAR(self->mechanics.readline);
 }

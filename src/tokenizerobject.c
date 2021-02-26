@@ -72,8 +72,7 @@ static int
 woosh_tokenizer_traverse(WooshTokenizer *self, visitproc visit, void *arg)
 {
     Py_VISIT(self->source);
-    traverse_mechanics(self, visit, arg);
-    return 0;
+    return traverse_mechanics(self, visit, arg);
 }
 
 // tp_clear for Tokenizer
