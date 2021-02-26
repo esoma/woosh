@@ -7,7 +7,6 @@ import woosh
 
 @pytest.mark.parametrize('bad_source', [
     None,
-    b'hello world',
     'hello world',
     5,
 ])
