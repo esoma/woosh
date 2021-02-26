@@ -2,8 +2,7 @@
 # this file is generated from woosh/unicode/generate.py using
 # properties from the unicode character database
 
-from typing import Final
-XID_START: Final = (
+XID_START = (
     (65, 90),
     (97, 122),
     (170, 170),
@@ -362,7 +361,7 @@ XID_START: Final = (
     (131072, 173782),
     (194560, 195101),
 )
-XID_CONTINUE: Final = (
+XID_CONTINUE = (
     (48, 57),
     (65, 90),
     (95, 95),

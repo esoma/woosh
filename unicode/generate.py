@@ -43,10 +43,9 @@ with open(WOOSH_DIR / 'test/python/ucd.py', 'w') as f:
         # this file is generated from woosh/unicode/generate.py using
         # properties from the unicode character database
         
-        from typing import Final
     '''))
     for property, codepoints in property_codepoints.items():
-        f.write(f'{property.upper()}: Final = (\n')
+        f.write(f'{property.upper()} = (\n')
         for min, max in codepoints:
             f.write(f'    ({min}, {max}),\n')
         f.write(')\n')

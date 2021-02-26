@@ -6,21 +6,20 @@ import ucd
 
 # python
 import itertools
-from typing import Final
 
-NORMAL_ASCII_CHARACTERS: Final = tuple(
+NORMAL_ASCII_CHARACTERS = tuple(
     chr(i) for i in itertools.chain(
         range(ord(' '), ord('~') + 1),
     )
 ) + ('\t',)
 
-NEWLINES: Final = ('\n', '\r\n')
-OPTIONAL_NEWLINES: Final = ('',) + NEWLINES
+NEWLINES = ('\n', '\r\n')
+OPTIONAL_NEWLINES = ('',) + NEWLINES
 
-ONELINE_STRING_QUOTES: Final = ('\'', '"')
-MULTILINE_STRING_QUOTES: Final = ('\'\'\'', '"""')
-STRING_QUOTES: Final = ONELINE_STRING_QUOTES + MULTILINE_STRING_QUOTES
-UNICODE_PREFIXES: Final = (
+ONELINE_STRING_QUOTES = ('\'', '"')
+MULTILINE_STRING_QUOTES = ('\'\'\'', '"""')
+STRING_QUOTES = ONELINE_STRING_QUOTES + MULTILINE_STRING_QUOTES
+UNICODE_PREFIXES = (
     '',
     'f', 'F',
     'fr', 'fR', 'Fr', 'FR',
@@ -28,13 +27,13 @@ UNICODE_PREFIXES: Final = (
     'rf', 'rF', 'Rf', 'RF',
     'u', 'U',
 )
-BYTES_PREFIXES: Final = (
+BYTES_PREFIXES = (
     'rb', 'rB', 'Rb', 'RB',
     'b', 'B',
     'br', 'bR', 'Br', 'BR',
 )
-STRING_PREFIXES: Final = UNICODE_PREFIXES + BYTES_PREFIXES
-VALID_STRING_LITERALS_NO_PREFIX: Final = (
+STRING_PREFIXES = UNICODE_PREFIXES + BYTES_PREFIXES
+VALID_STRING_LITERALS_NO_PREFIX = (
     # empty strings
     *(q * 2 for q in STRING_QUOTES),
     # 'hello world'
@@ -58,7 +57,7 @@ VALID_STRING_LITERALS_NO_PREFIX: Final = (
         for q, newline in itertools.product(STRING_QUOTES, NEWLINES)
     ),
 )
-VALID_STRING_LITERALS: Final = (
+VALID_STRING_LITERALS = (
     *(
         f'{prefix}{literal}'
         for prefix, literal in
@@ -71,7 +70,7 @@ VALID_STRING_LITERALS: Final = (
         itertools.product(UNICODE_PREFIXES, STRING_QUOTES)
     )
 )
-INVALID_STRING_LITERALS: Final = (
+INVALID_STRING_LITERALS = (
     # abrupt end
     # '
     *(
@@ -99,7 +98,7 @@ INVALID_STRING_LITERALS: Final = (
         )
     )
 )
-VALID_NAME_LITERALS: Final = (
+VALID_NAME_LITERALS = (
     '_',
     # name start characters
     # we only check the min and max in each range since checking every character
@@ -121,7 +120,7 @@ VALID_NAME_LITERALS: Final = (
     *(p for p in STRING_PREFIXES if len(p) > 1),
 )
 
-INVALID_NAME_LITERALS: Final = (
+INVALID_NAME_LITERALS = (
     # starting with a non-start ascii characters that aren't "normal" (that is
     # they're not numbers, whitespace, operators, etc.)
     *(
@@ -141,7 +140,7 @@ INVALID_NAME_LITERALS: Final = (
         if c >= 128
     ),
 )
-NAMES_SPLIT_BY_TOKEN: Final = (
+NAMES_SPLIT_BY_TOKEN = (
     # continueing with a ascii characters that can't continue a name
     *(
         (f'_{chr(c)}', '_')
@@ -163,17 +162,17 @@ NAMES_SPLIT_BY_TOKEN: Final = (
     ),
 )
 
-EXPONENT_SIGILS: Final = ('e', 'E')
-OPTIONAL_EXPONENT_SIGILS: Final = ('',) + EXPONENT_SIGILS
-EXPONENT_SIGNS: Final = ('+', '-')
-OPTIONAL_EXPONENT_SIGNS: Final = ('',) + EXPONENT_SIGNS
+EXPONENT_SIGILS = ('e', 'E')
+OPTIONAL_EXPONENT_SIGILS = ('',) + EXPONENT_SIGILS
+EXPONENT_SIGNS = ('+', '-')
+OPTIONAL_EXPONENT_SIGNS = ('',) + EXPONENT_SIGNS
 
-IMAGINARY_SIGILS: Final = ('j', 'J')
-OPTIONAL_IMAGINARY_SIGILS: Final = ('',) + IMAGINARY_SIGILS
+IMAGINARY_SIGILS = ('j', 'J')
+OPTIONAL_IMAGINARY_SIGILS = ('',) + IMAGINARY_SIGILS
 
-BINARY_SIGILS: Final = ('b', 'B')
-BINARY_VALUES: Final = tuple(str(i) for i in range(0, 2))
-VALID_BINARY_VALUES: Final = (
+BINARY_SIGILS = ('b', 'B')
+BINARY_VALUES = tuple(str(i) for i in range(0, 2))
+VALID_BINARY_VALUES = (
     *BINARY_VALUES,
     *(f'{b0}{b1}' for b0, b1 in itertools.product(
         BINARY_VALUES,
@@ -188,11 +187,11 @@ VALID_BINARY_VALUES: Final = (
         BINARY_VALUES
     )),
 )
-VALID_BINARY_LITERALS: Final = tuple(
+VALID_BINARY_LITERALS = tuple(
     f'0{sigil}{value}'
     for sigil, value in itertools.product(BINARY_SIGILS, VALID_BINARY_VALUES)
 )
-INVALID_BINARY_LITERALS: Final = (
+INVALID_BINARY_LITERALS = (
     # `0b`
     #   ^ incomplete
     *(
@@ -218,7 +217,7 @@ INVALID_BINARY_LITERALS: Final = (
         for sigil, binary in itertools.product(BINARY_SIGILS, BINARY_VALUES)
     ),
 )
-BINARIES_SPLIT_BY_TOKEN: Final = (
+BINARIES_SPLIT_BY_TOKEN = (
     # 0b0a
     #   ^ end of number
     #    ^ start of something else
@@ -236,9 +235,9 @@ BINARIES_SPLIT_BY_TOKEN: Final = (
     ),
 )
 
-OCTAL_SIGILS: Final = ('o', 'O')
-OCTAL_VALUES: Final = tuple(str(i) for i in range(0, 8))
-VALID_OCTAL_VALUES: Final = (
+OCTAL_SIGILS = ('o', 'O')
+OCTAL_VALUES = tuple(str(i) for i in range(0, 8))
+VALID_OCTAL_VALUES = (
     *OCTAL_VALUES,
     *(f'{o0}{o1}' for o0, o1 in itertools.product(
         OCTAL_VALUES,
@@ -253,11 +252,11 @@ VALID_OCTAL_VALUES: Final = (
         OCTAL_VALUES
     )),
 )
-VALID_OCTAL_LITERALS: Final = tuple(
+VALID_OCTAL_LITERALS = tuple(
     f'0{sigil}{value}'
     for sigil, value in itertools.product(OCTAL_SIGILS, VALID_OCTAL_VALUES)
 )
-INVALID_OCTAL_LITERALS: Final = (
+INVALID_OCTAL_LITERALS = (
     # `0o`
     #   ^ incomplete
     *(
@@ -283,7 +282,7 @@ INVALID_OCTAL_LITERALS: Final = (
         for sigil, octal in itertools.product(OCTAL_SIGILS, OCTAL_VALUES)
     ),
 )
-OCTAL_SPLIT_BY_TOKEN: Final = (
+OCTAL_SPLIT_BY_TOKEN = (
     # 0o0a
     #   ^ end of number
     #    ^ start of something else
@@ -301,19 +300,19 @@ OCTAL_SPLIT_BY_TOKEN: Final = (
     ),
 )
 
-HEX_SIGILS: Final = ('x', 'X')
-HEX_VALUES: Final = (
+HEX_SIGILS = ('x', 'X')
+HEX_VALUES = (
     *(str(i) for i in range(0, 10)),
     *(chr(i) for i in range(ord('a'), ord('f') + 1)),
     *(chr(i) for i in range(ord('A'), ord('F') + 1))
 )
-VALID_HEX_EXPONENT_VALUES: Final = (
+VALID_HEX_EXPONENT_VALUES = (
     *HEX_VALUES,
     *(f'0{v}' for v in HEX_VALUES),
     ''.join(HEX_VALUES),
     ''.join(HEX_VALUES[::-1]),
 )
-VALID_HEX_EXPONENTS: Final = tuple(
+VALID_HEX_EXPONENTS = tuple(
     f'{exponent_template}'.format(
         exponent_sign=exponent_sign,
         exponent_number=exponent_number
@@ -328,7 +327,7 @@ VALID_HEX_EXPONENTS: Final = tuple(
         VALID_HEX_EXPONENT_VALUES
     )
 )
-VALID_HEX_VALUES: Final = (
+VALID_HEX_VALUES = (
     *HEX_VALUES,
     *(f'{h0}{h1}' for h0, h1 in itertools.product(
         HEX_VALUES,
@@ -343,11 +342,11 @@ VALID_HEX_VALUES: Final = (
         HEX_VALUES
     )),
 )
-VALID_HEX_LITERALS: Final = tuple(
+VALID_HEX_LITERALS = tuple(
     f'0{sigil}{value}'
     for sigil, value in itertools.product(HEX_SIGILS, VALID_HEX_VALUES)
 )
-INVALID_HEX_LITERALS: Final = (
+INVALID_HEX_LITERALS = (
     # `0x`
     #   ^ incomplete
     *(
@@ -373,7 +372,7 @@ INVALID_HEX_LITERALS: Final = (
         for sigil, hex in itertools.product(HEX_SIGILS, HEX_VALUES)
     ),
 )
-HEX_SPLIT_BY_TOKEN: Final = (
+HEX_SPLIT_BY_TOKEN = (
     # 0x0a
     #   ^ end of number
     #    ^ start of something else
@@ -391,14 +390,14 @@ HEX_SPLIT_BY_TOKEN: Final = (
     ),
 )
 
-DECIMAL_VALUES: Final = tuple(str(i) for i in range(0, 10))
-VALID_EXPONENT_VALUES: Final = (
+DECIMAL_VALUES = tuple(str(i) for i in range(0, 10))
+VALID_EXPONENT_VALUES = (
     *DECIMAL_VALUES,
     *(f'0{v}' for v in DECIMAL_VALUES),
     ''.join(DECIMAL_VALUES),
     ''.join(DECIMAL_VALUES[::-1]),
 )
-VALID_EXPONENTS: Final = tuple(
+VALID_EXPONENTS = tuple(
     f'{exponent_template}{imaginary_sigil}'.format(
         exponent_sign=exponent_sign,
         exponent_number=exponent_number
@@ -414,19 +413,19 @@ VALID_EXPONENTS: Final = tuple(
         OPTIONAL_IMAGINARY_SIGILS,
     )
 )
-VALID_NON_ZERO_DECIMAL_LITERALS_NO_SIGILS: Final = (
+VALID_NON_ZERO_DECIMAL_LITERALS_NO_SIGILS = (
     *(d for d in DECIMAL_VALUES if d != '0'),
     *(f'{d}0' for d in DECIMAL_VALUES if d != '0'),
     *(f'{d}_0' for d in DECIMAL_VALUES if d != '0'),
     *(f'{d}00_00{d}' for d in DECIMAL_VALUES if d != '0'),
 )
-VALID_ZERO_LITERALS: Final = (
+VALID_ZERO_LITERALS = (
     '0',
     '00',
     '0_0',
     *(f'0{exponent}' for exponent in VALID_EXPONENTS)
 )
-VALID_NON_ZERO_DECIMAL_LITERALS: Final = (
+VALID_NON_ZERO_DECIMAL_LITERALS = (
     *VALID_NON_ZERO_DECIMAL_LITERALS_NO_SIGILS,
     *(
         f'{decimal}{exponent}'
@@ -437,7 +436,7 @@ VALID_NON_ZERO_DECIMAL_LITERALS: Final = (
         )
     )
 )
-INVALID_DECIMAL_LITERALS: Final = (
+INVALID_DECIMAL_LITERALS = (
     # `0_`
     #   ^ ends with underscore
     *(
@@ -520,7 +519,7 @@ INVALID_DECIMAL_LITERALS: Final = (
         in itertools.product(DECIMAL_VALUES, IMAGINARY_SIGILS)
     ),
 )
-DECIMALS_SPLIT_BY_TOKEN: Final = (
+DECIMALS_SPLIT_BY_TOKEN = (
     # 0a0
     # ^ end of number
     #  ^ start of something else
@@ -592,16 +591,16 @@ DECIMALS_SPLIT_BY_TOKEN: Final = (
     ),
 )
 
-VALID_FLOAT_LITERAL_BASES: Final = (
+VALID_FLOAT_LITERAL_BASES = (
     '.',
     '0.',
     *(f'{d}.' for d in VALID_NON_ZERO_DECIMAL_LITERALS_NO_SIGILS)
 )
-VALID_FLOAT_LITERAL_FRACTIONS: Final = (
+VALID_FLOAT_LITERAL_FRACTIONS = (
     '',
     *VALID_NON_ZERO_DECIMAL_LITERALS_NO_SIGILS,
 )
-VALID_FLOAT_LITERALS_NO_SIGILS: Final = tuple(
+VALID_FLOAT_LITERALS_NO_SIGILS = tuple(
     f'{base}{fraction}'
     for base, fraction
     in itertools.product(
@@ -611,7 +610,7 @@ VALID_FLOAT_LITERALS_NO_SIGILS: Final = tuple(
     # a plain `.` is not a float
     if base != '.' and fraction
 )
-VALID_FLOAT_LITERALS: Final = (
+VALID_FLOAT_LITERALS = (
     *VALID_FLOAT_LITERALS_NO_SIGILS,
     *(
         f'{base}{exponent}'
@@ -622,7 +621,7 @@ VALID_FLOAT_LITERALS: Final = (
         )
     )
 )
-INVALID_FLOAT_LITERALS: Final = (
+INVALID_FLOAT_LITERALS = (
     # `0.0_`
     #   ^ ends with underscore
     *(
@@ -701,7 +700,7 @@ INVALID_FLOAT_LITERALS: Final = (
         in itertools.product(DECIMAL_VALUES, IMAGINARY_SIGILS)
     ),
 )
-FLOATS_SPLIT_BY_TOKEN: Final = (
+FLOATS_SPLIT_BY_TOKEN = (
     # 0.0a0
     # ^ end of number
     #  ^ start of something else
