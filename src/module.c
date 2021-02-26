@@ -7,11 +7,20 @@
 #include "woosh/typeobject.h"
 
 static PyObject *
-woosh_module_tokenize(PyObject *self, PyObject *args)
+woosh_module_tokenize(PyObject *self, PyObject *args, PyObject *kwargs)
 {
+    char* keywords[] = {"", "continue_on_error", 0};
     PyObject *source;
-    if (!PyArg_ParseTuple(args, "O", &source)){ return 0; };
-    return (PyObject *)WooshTokenizer_New_(self, source);
+    int continue_on_error = 0;
+    if (!PyArg_ParseTupleAndKeywords(
+        args,
+        kwargs,
+        "O|$p",
+        keywords,
+        &source,
+        &continue_on_error
+    )){ return 0; };
+    return (PyObject *)WooshTokenizer_New_(self, source, continue_on_error);
 }
 
 static int
@@ -31,7 +40,7 @@ woosh_module_clear(PyObject *self)
 }
 
 static PyMethodDef woosh_module_methods[] = {
-    {"tokenize",  woosh_module_tokenize, METH_VARARGS, 0},
+    {"tokenize",  woosh_module_tokenize, METH_VARARGS | METH_KEYWORDS, 0},
     {NULL, NULL, 0, NULL}
 };
 

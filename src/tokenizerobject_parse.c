@@ -337,7 +337,10 @@ yield_token(WooshTokenizer *tokenizer, WooshToken *token)
 WooshToken *
 parse(WooshTokenizer *tokenizer)
 {
-    if (tokenizer->parse.last_token_type != tokenizer->error_type)
+    if (
+        tokenizer->continue_on_error ||
+        tokenizer->parse.last_token_type != tokenizer->error_type
+    )
     {
         if (encoding(tokenizer) == 0)
         {

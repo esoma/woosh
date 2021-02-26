@@ -14,7 +14,7 @@
 #include "woosh/tokenizerobject.h"
 #include "tokenizerobject_internal.h"
 
-static WooshTokenizer *create_tokenizer(PyObject *, PyObject *);
+static WooshTokenizer *create_tokenizer(PyObject *, PyObject *, int);
 static WooshToken *iter_tokenizer(WooshTokenizer *);
 
 // tp_dealloc for Tokenizer
@@ -127,11 +127,11 @@ WooshTokenizer_Initialize_(PyObject *module)
 
 // create a Tokenizer instance
 WooshTokenizer *
-WooshTokenizer_New_(PyObject *module, PyObject *source)
+WooshTokenizer_New_(PyObject *module, PyObject *source, int continue_on_error)
 {
     assert(module);
     assert(source);
-    return create_tokenizer(module, source);
+    return create_tokenizer(module, source, continue_on_error);
 }
 
 // get the Tokenizer type
@@ -181,7 +181,7 @@ WooshTokenizer_NEXT(WooshTokenizer *self)
 
 // internal initializer for the Tokenizer
 static WooshTokenizer *
-create_tokenizer(PyObject *module, PyObject *source)
+create_tokenizer(PyObject *module, PyObject *source, int continue_on_error)
 {
     struct WooshModuleState *module_state = PyModule_GetState(module);
     assert(module_state);
@@ -213,6 +213,7 @@ create_tokenizer(PyObject *module, PyObject *source)
 
     Py_INCREF(source);
     tokenizer->source = source;
+    tokenizer->continue_on_error = continue_on_error;
 
     if (!init_mechanics(tokenizer)){ goto error; }
     if (!init_parse(tokenizer)){ goto error; }

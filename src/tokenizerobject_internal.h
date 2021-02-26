@@ -130,6 +130,7 @@ struct WooshTokenizer_
     WooshType *encoding_type;
 
     PyObject *source;
+    int continue_on_error;
 
     struct Mechanics mechanics;
     struct Parse parse;

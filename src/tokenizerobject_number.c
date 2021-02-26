@@ -34,22 +34,18 @@ parse_binint(WooshTokenizer *tokenizer)
         next_c = peek(tokenizer, 0);
         if (next_c == 0 && PyErr_Occurred()){ return 0; }
         if (!is_binary(next_c)){ break; }
-        advance(tokenizer);
         // two underscores may not follow each other
         if (last_c == '_' && next_c == '_')
         {
             return error(tokenizer);
         }
+        advance(tokenizer);
         last_c = next_c;
     }
     if (last_c == '_' || !is_binary(last_c))
     {
         Py_UCS4 next_c = peek(tokenizer, 0);
         if (next_c == 0 && PyErr_Occurred()){ return 0; }
-        if (next_c)
-        {
-            if (!advance(tokenizer)){ return 0; }
-        }
         return error(tokenizer);
     }
     // note that binary integer literals may not have an exponent or imaginary
@@ -77,22 +73,18 @@ parse_octint(WooshTokenizer *tokenizer)
         Py_UCS4 next_c = peek(tokenizer, 0);
         if (next_c == 0 && PyErr_Occurred()){ return 0; }
         if (!is_octal(next_c)){ break; }
-        advance(tokenizer);
         // two underscores may not follow each other
         if (last_c == '_' && next_c == '_')
         {
             return error(tokenizer);
         }
+        advance(tokenizer);
         last_c = next_c;
     }
     if (last_c == '_' || !is_octal(last_c))
     {
         Py_UCS4 next_c = peek(tokenizer, 0);
         if (next_c == 0 && PyErr_Occurred()){ return 0; }
-        if (next_c)
-        {
-            if (!advance(tokenizer)){ return 0; }
-        }
         return error(tokenizer);
     }
     // note that octal integer literals may not have an exponent or imaginary
@@ -121,22 +113,18 @@ parse_hexint(WooshTokenizer *tokenizer)
         Py_UCS4 next_c = peek(tokenizer, 0);
         if (next_c == 0 && PyErr_Occurred()){ return 0; }
         if (!is_hex(next_c)){ break; }
-        advance(tokenizer);
         // two underscores may not follow each other
         if (last_c == '_' && next_c == '_')
         {
             return error(tokenizer);
         }
+        advance(tokenizer);
         last_c = next_c;
     }
     if (last_c == '_' || !is_hex(last_c))
     {
         Py_UCS4 next_c = peek(tokenizer, 0);
         if (next_c == 0 && PyErr_Occurred()){ return 0; }
-        if (next_c)
-        {
-            if (!advance(tokenizer)){ return 0; }
-        }
         return error(tokenizer);
     }
     return number(tokenizer);
@@ -168,7 +156,6 @@ parse_exponent(WooshTokenizer *tokenizer)
     // after the `+` or `-` comes numbers, but the first one may not be a `_`
     if (next_c == '_')
     {
-        if (!advance(tokenizer)){ return 0; }
         return error(tokenizer);
     }
     // the optional `+` or `-` must be followed by a number
@@ -178,12 +165,12 @@ parse_exponent(WooshTokenizer *tokenizer)
         Py_UCS4 next_c = peek(tokenizer, 0);
         if (next_c == 0 && PyErr_Occurred()){ return 0; }
         if (!is_number_continue(next_c)){ break; }
-        if (!advance(tokenizer)){ return 0; }
         // two underscores may not follow each other
         if (last_c == '_' && next_c == '_')
         {
             return error(tokenizer);
         }
+        if (!advance(tokenizer)){ return 0; }
         last_c = next_c;
     }
     // the exponent part must end with an actual 0-9 number
@@ -191,10 +178,6 @@ parse_exponent(WooshTokenizer *tokenizer)
     {
         Py_UCS4 next_c = peek(tokenizer, 0);
         if (next_c == 0 && PyErr_Occurred()){ return 0; }
-        if (next_c)
-        {
-            if (!advance(tokenizer)){ return 0; }
-        }
         return error(tokenizer);
     }
     // the exponent numbers may optionally be followed by `j` or `J` to denote
@@ -226,7 +209,6 @@ parse_float(WooshTokenizer *tokenizer)
     if (next_c == 0 && PyErr_Occurred()){ return 0; }
     if (next_c == '_')
     {
-        if (!advance(tokenizer)){ return 0; }
         return error(tokenizer);
     }
     // a set of numbers or underscores *may* follow the `.` (0. is acceptable
@@ -238,11 +220,11 @@ parse_float(WooshTokenizer *tokenizer)
         if (next_c == 0 && PyErr_Occurred()){ return 0; }
         if (!is_number_continue(next_c)){ break; }
         // two underscores may not follow each other
-        if (!advance(tokenizer)){ return 0; }
         if (last_c == '_' && next_c == '_')
         {
             return error(tokenizer);
         }
+        if (!advance(tokenizer)){ return 0; }
         last_c = next_c;
     }
     // the last character in the numbers section may not be an `_`
@@ -288,18 +270,18 @@ parse_zero(WooshTokenizer *tokenizer)
             // ex: `00x0` is not valid
             case 'b':
             case 'B':
-                if (!advance(tokenizer)){ return 0; }
                 if (i){ return error(tokenizer); }
+                if (!advance(tokenizer)){ return 0; }
                 return parse_binint(tokenizer);
             case 'o':
             case 'O':
-                if (!advance(tokenizer)){ return 0; }
                 if (i){ return error(tokenizer); }
+                if (!advance(tokenizer)){ return 0; }
                 return parse_octint(tokenizer);
             case 'x':
             case 'X':
-                if (!advance(tokenizer)){ return 0; }
                 if (i){ return error(tokenizer); }
+                if (!advance(tokenizer)){ return 0; }
                 return parse_hexint(tokenizer);
             case 'e':
             case 'E':
@@ -322,7 +304,6 @@ parse_zero(WooshTokenizer *tokenizer)
             case '7':
             case '8':
             case '9':
-                if (!advance(tokenizer)){ return 0; }
                 return error(tokenizer);
             // zero may be followed by other zeroes, just continue looping
             case '0':
@@ -336,13 +317,6 @@ parse_zero(WooshTokenizer *tokenizer)
                 if (next_c == 0 && PyErr_Occurred()){ return 0; }
                 if (next_c != '0')
                 {
-                    // this advance is to make error reporting consistent with
-                    // the non-zero case where a double underscore is consumed
-                    // by the error
-                    if (next_c == '_')
-                    {
-                        if (!advance(tokenizer)){ return 0; }
-                    }
                     return error(tokenizer);
                 }
                 break;
@@ -371,7 +345,6 @@ parse_number(WooshTokenizer *tokenizer)
         // two underscores may not follow each other
         if (last_c == '_' && next_c == '_')
         {
-            if (!advance(tokenizer)){ return 0; }
             return error(tokenizer);
         }
         if (!advance(tokenizer)){ return 0; }

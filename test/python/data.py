@@ -90,7 +90,7 @@ INVALID_STRING_LITERALS: Final = (
     ),
     # byte strings may not have ucd literals
     *(
-        (f'{prefix}{q}{ucd}{q}', f'{prefix}{q}{ucd[0]}')
+        (f'{prefix}{q}{ucd}{q}', f'{prefix}{q}')
         for prefix, ucd, q in
         itertools.product(
             BYTES_PREFIXES,
@@ -208,13 +208,13 @@ INVALID_BINARY_LITERALS: Final = (
     # `00b0`
     #    ^ starts with two zeroes
     *(
-        (f'00{sigil}{binary}', f'00{sigil}')
+        (f'00{sigil}{binary}', f'00')
         for sigil, binary in itertools.product(BINARY_SIGILS, BINARY_VALUES)
     ),
     # `0b0__0`
     #    ^ double underscore
     *(
-        (f'0{sigil}{binary}__{binary}', f'0{sigil}{binary}__')
+        (f'0{sigil}{binary}__{binary}', f'0{sigil}{binary}_')
         for sigil, binary in itertools.product(BINARY_SIGILS, BINARY_VALUES)
     ),
 )
@@ -273,13 +273,13 @@ INVALID_OCTAL_LITERALS: Final = (
     # `00o0`
     #    ^ starts with two zeroes
     *(
-        (f'00{sigil}{octal}', f'00{sigil}')
+        (f'00{sigil}{octal}', f'00')
         for sigil, octal in itertools.product(OCTAL_SIGILS, OCTAL_VALUES)
     ),
     # `0o0__0`
     #    ^ double underscore
     *(
-        (f'0{sigil}{octal}__{octal}', f'0{sigil}{octal}__')
+        (f'0{sigil}{octal}__{octal}', f'0{sigil}{octal}_')
         for sigil, octal in itertools.product(OCTAL_SIGILS, OCTAL_VALUES)
     ),
 )
@@ -363,13 +363,13 @@ INVALID_HEX_LITERALS: Final = (
     # `00x0`
     #    ^ starts with two zeroes
     *(
-        (f'00{sigil}{hex}', f'00{sigil}')
+        (f'00{sigil}{hex}', f'00')
         for sigil, hex in itertools.product(HEX_SIGILS, HEX_VALUES)
     ),
     # `0x0__0`
     #      ^ double underscore
     *(
-        (f'0{sigil}{hex}__{hex}', f'0{sigil}{hex}__')
+        (f'0{sigil}{hex}__{hex}', f'0{sigil}{hex}_')
         for sigil, hex in itertools.product(HEX_SIGILS, HEX_VALUES)
     ),
 )
@@ -447,14 +447,14 @@ INVALID_DECIMAL_LITERALS: Final = (
     # `01`
     #   ^ starts with zero
     *(
-        (f'0{decimal}', f'0{decimal}')
+        (f'0{decimal}', '0')
         for decimal in DECIMAL_VALUES
         if decimal != '0'
     ),
     # `0__0`
     #    ^ double underscore
     *(
-        (f'{decimal}__{decimal}', f'{decimal}__')
+        (f'{decimal}__{decimal}', f'{decimal}_')
         for decimal in DECIMAL_VALUES
     ),
     # `0_e0`
@@ -479,7 +479,7 @@ INVALID_DECIMAL_LITERALS: Final = (
     *(
         (
             f'{decimal}{exponent_sigil}{decimal}__{decimal}',
-            f'{decimal}{exponent_sigil}{decimal}__',
+            f'{decimal}{exponent_sigil}{decimal}_',
         )
         for decimal, exponent_sigil
         in itertools.product(DECIMAL_VALUES, EXPONENT_SIGILS)
@@ -489,7 +489,7 @@ INVALID_DECIMAL_LITERALS: Final = (
     *(
         (
             f'{decimal}{exponent_sigil}{exponent_sign}a',
-            f'{decimal}{exponent_sigil}{exponent_sign}a',
+            f'{decimal}{exponent_sigil}{exponent_sign}',
         )
         for decimal, exponent_sigil, exponent_sign
         in itertools.product(
@@ -503,7 +503,7 @@ INVALID_DECIMAL_LITERALS: Final = (
     *(
         (
             f'{decimal}{exponent_sigil}{exponent_sign}{exponent_sign}{decimal}',
-            f'{decimal}{exponent_sigil}{exponent_sign}{exponent_sign}'
+            f'{decimal}{exponent_sigil}{exponent_sign}'
         )
         for decimal, exponent_sigil, exponent_sign
         in itertools.product(
@@ -632,7 +632,7 @@ INVALID_FLOAT_LITERALS: Final = (
     # `0.0__0`
     #    ^ double underscore
     *(
-        (f'{decimal}.{decimal}__{decimal}', f'{decimal}.{decimal}__')
+        (f'{decimal}.{decimal}__{decimal}', f'{decimal}.{decimal}_')
         for decimal in DECIMAL_VALUES
     ),
     # `0.0_e0`
@@ -660,7 +660,7 @@ INVALID_FLOAT_LITERALS: Final = (
     *(
         (
             f'{decimal}.{decimal}{exponent_sigil}{decimal}__{decimal}',
-            f'{decimal}.{decimal}{exponent_sigil}{decimal}__',
+            f'{decimal}.{decimal}{exponent_sigil}{decimal}_',
         )
         for decimal, exponent_sigil
         in itertools.product(DECIMAL_VALUES, EXPONENT_SIGILS)
@@ -670,7 +670,7 @@ INVALID_FLOAT_LITERALS: Final = (
     *(
         (
             f'{decimal}.{decimal}{exponent_sigil}{exponent_sign}a',
-            f'{decimal}.{decimal}{exponent_sigil}{exponent_sign}a',
+            f'{decimal}.{decimal}{exponent_sigil}{exponent_sign}',
         )
         for decimal, exponent_sigil, exponent_sign
         in itertools.product(
@@ -684,7 +684,7 @@ INVALID_FLOAT_LITERALS: Final = (
     *(
         (
             f'{decimal}.{decimal}{exponent_sigil}{exponent_sign}{exponent_sign}{decimal}',
-            f'{decimal}.{decimal}{exponent_sigil}{exponent_sign}{exponent_sign}'
+            f'{decimal}.{decimal}{exponent_sigil}{exponent_sign}'
         )
         for decimal, exponent_sigil, exponent_sign
         in itertools.product(

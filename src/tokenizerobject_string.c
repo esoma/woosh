@@ -188,7 +188,6 @@ parse_string(
             // bytes string literals may only contain ASCII characters
             else if (is_bytes && next_c >= 128)
             {
-                if (!advance(tokenizer)){ return 0; }
                 return error(tokenizer);
             }
 

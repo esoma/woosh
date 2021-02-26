@@ -61,6 +61,7 @@ indent(WooshTokenizer *tokenizer, size_t line_indent)
 {
     if (!lifo_buffer_push(&tokenizer->indent.stack, &line_indent, sizeof(size_t)))
     {
+        // TODO: this should raise a memory error?
         return error(tokenizer);
     }
     return consume(

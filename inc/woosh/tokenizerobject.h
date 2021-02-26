@@ -12,7 +12,7 @@ typedef struct WooshTokenizer_ WooshTokenizer;
 
 PyTypeObject *WooshTokenizer_Initialize_(PyObject *);
 
-WooshTokenizer *WooshTokenizer_New_(PyObject *, PyObject *);
+WooshTokenizer *WooshTokenizer_New_(PyObject *, PyObject *, int);
 PyTypeObject *WooshTokenizer_Get_();
 
 int WooshTokenizer_Check(PyObject *);

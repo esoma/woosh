@@ -174,3 +174,13 @@ def test_different_open_close(tokenize, open, close):
         woosh.Token(woosh.ERROR, close, 1, 1, 1, 2),
     ]
     assert tokens == expected
+    
+    
+@pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
+def test_bang(tokenize):
+    tokens = tokenize(f'!'.encode('utf-8'))
+    expected = [
+        woosh.Token(woosh.ENCODING, 'utf-8', 1, 0, 1, 0),
+        woosh.Token(woosh.ERROR, '!', 1, 0, 1, 1),
+    ]
+    assert tokens == expected

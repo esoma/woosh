@@ -20,12 +20,12 @@ def tokenize_bytes(source):
 @pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
 @pytest.mark.parametrize(
     'literal',
-    (*data.VALID_ZERO_LITERALS,
-     *data.VALID_NON_ZERO_DECIMAL_LITERALS,
-     *data.VALID_FLOAT_LITERALS,
-     *data.VALID_BINARY_LITERALS,
-     *data.VALID_OCTAL_LITERALS,
-     *data.VALID_HEX_LITERALS)
+    data.VALID_ZERO_LITERALS +
+    data.VALID_NON_ZERO_DECIMAL_LITERALS +
+    data.VALID_FLOAT_LITERALS +
+    data.VALID_BINARY_LITERALS +
+    data.VALID_OCTAL_LITERALS +
+    data.VALID_HEX_LITERALS
 )
 def test_valid_number_literal(tokenize, literal):
     tokens = tokenize(literal.encode('utf-8'))
@@ -55,7 +55,7 @@ def test_invalid_number_literal(tokenize, literal, error):
     ]
     assert tokens == expected
 
-    
+
 @pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
 @pytest.mark.parametrize(
     'code, number',
