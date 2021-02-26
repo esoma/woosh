@@ -32,11 +32,11 @@ jobs:
         
     - name: Build
       run: |
-        python setup.py build_ext --gcov install
+        python setup.py build_ext --gcov --enable-assert install
         
     - name: Test
       run: |
-        pytest
+        pytest -s
 
     - name: Codecov
       uses: codecov/codecov-action@v1.2.1

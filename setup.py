@@ -44,6 +44,7 @@ class BuildExtCommand(build_ext):
         ('pgo-use', None, 'build using profile guided optimization'),
         ('pgo-data=', None, 'the pgo data location/file'),
         ('gcov', None, 'build with gcov instrumentation'),
+        ('enable-assert', None, 'build with asserts enabled'),
     ]
     
     def initialize_options(self):
@@ -52,10 +53,13 @@ class BuildExtCommand(build_ext):
         self.pgo_use = None
         self.pgo_data = None
         self.gcov = None
+        self.enable_assert = None
         
     def finalize_options(self):
         super().finalize_options()
         for extension in self.extensions:
+            if self.enable_assert:
+                extension.undef_macros.append('NDEBUG')
             if self.gcov:
                 extension.extra_compile_args.append('-fprofile-arcs')
                 extension.extra_compile_args.append('-ftest-coverage')
