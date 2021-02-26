@@ -41,7 +41,7 @@ jobs:
         
     - name: Test
       run: |
-        gdb -return-child-result -batch -ex "run" -ex "bt" --args pytest -s
+        gdb -return-child-result -batch -ex "run" -ex "bt" --args python3 -m pytest -s
 
     - name: Codecov
       uses: codecov/codecov-action@v1.2.1
