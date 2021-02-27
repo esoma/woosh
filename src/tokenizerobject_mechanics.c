@@ -659,7 +659,7 @@ consume(
                 if (PyUnicode_CopyCharacters(
                     value, i_position,
                     *i_line, 0, line_length
-                ) == -1){ goto error; }
+                ) == -1){ goto error; } // LCOV_EXCL_LINE
                 i_position += line_length;
             }
             // copy the last line of characters
