@@ -133,25 +133,25 @@ PyTypeObject *
 WooshType_Initialize_(PyObject *module)
 {
 #if PY_VERSION_HEX >= 0x03090000
-    PyTypeObject *woosh_type_type = (PyTypeObject *)PyType_FromModuleAndSpec(
+    PyTypeObject *type = (PyTypeObject *)PyType_FromModuleAndSpec(
         module,
         &woosh_type_spec,
         0
     );
 #else
-    PyTypeObject* woosh_type_type = (PyTypeObject *)PyType_FromSpec(
-        &woosh_type_spec
-    );
+    PyTypeObject* type = (PyTypeObject *)PyType_FromSpec(&woosh_type_spec);
+    // hack for 3.6-8 to support weakrefs
+    type->tp_weaklistoffset = offsetof(WooshType, weakreflist);
 #endif
     // Note:
     // Unlike other functions that steal references, PyModule_AddObject() only
     // decrements the reference count of value on success.
-    if (PyModule_AddObject(module, "Type", (PyObject *)woosh_type_type) < 0)
+    if (PyModule_AddObject(module, "Type", (PyObject *)type) < 0)
     {
-        Py_DECREF(woosh_type_type);
+        Py_DECREF(type);
         return 0;
     }
-    return woosh_type_type;
+    return type;
 }
 
 // convenience function for adding a new Type instance to a module

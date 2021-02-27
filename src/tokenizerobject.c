@@ -120,6 +120,8 @@ WooshTokenizer_Initialize_(PyObject *module)
     );
 #else
     PyTypeObject* type = (PyTypeObject *)PyType_FromSpec(&woosh_tokenizer_spec);
+    // hack for 3.6-8 to support weakrefs
+    type->tp_weaklistoffset = offsetof(WooshTokenizer, weakreflist);
 #endif
     return type;
 }
