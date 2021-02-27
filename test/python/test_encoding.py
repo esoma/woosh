@@ -22,7 +22,9 @@ def tokenize_bytes(source):
 @pytest.mark.parametrize('structure', [
     '# coding={encoding}',
     '# -*- coding: {encoding} -*-',
-    '# vim: set fileencoding={encoding} :'
+    '# vim: set fileencoding={encoding} :',
+    '# coding|coding={encoding}',
+    '# coding==coding={encoding}',
 ])
 @pytest.mark.parametrize('encoding', [
     'ascii',
