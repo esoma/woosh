@@ -151,4 +151,47 @@ def test_cannot_subclass_token():
         class MyToken(woosh.Token):
             pass
             
+
+def test_equality():
+    a = woosh.Token(woosh.OP, '>', 0, 1, 2, 3)
+    b = woosh.Token(woosh.OP, '>', 0, 1, 2, 3)
+    assert a == b
+    assert not (a != b)
+
+    b = woosh.Token(woosh.EOF, '>', 0, 1, 2, 3)
+    assert not (a == b)
+    assert a != b
     
+    b = woosh.Token(woosh.OP, '<', 0, 1, 2, 3)
+    assert not (a == b)
+    assert a != b
+    
+    b = woosh.Token(woosh.OP, '>', 100, 1, 2, 3)
+    assert not (a == b)
+    assert a != b
+    
+    b = woosh.Token(woosh.OP, '>', 0, 100, 2, 3)
+    assert not (a == b)
+    assert a != b
+    
+    b = woosh.Token(woosh.OP, '>', 0, 1, 100, 3)
+    assert not (a == b)
+    assert a != b
+    
+    b = woosh.Token(woosh.OP, '>', 0, 1, 2, 100)
+    assert not (a == b)
+    assert a != b
+
+
+def test_non_equality_operators():
+    a = woosh.Token(woosh.OP, '>', 0, 1, 2, 3)
+    b = woosh.Token(woosh.OP, '>', 0, 1, 2, 3)
+    
+    with pytest.raises(TypeError):
+        a > b
+    with pytest.raises(TypeError):
+        a >= b
+    with pytest.raises(TypeError):
+        a < b
+    with pytest.raises(TypeError):
+        a <= b
