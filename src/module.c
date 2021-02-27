@@ -1,5 +1,6 @@
 
 // woosh
+#include "expose.h"
 #include "woosh/module.h"
 #include "modulestate.h"
 #include "woosh/tokenobject.h"
@@ -55,6 +56,7 @@ static struct PyModuleDef woosh_module = {
     woosh_module_clear
 };
 
+WOOSH_EXPOSE
 PyMODINIT_FUNC
 PyInit__woosh()
 {

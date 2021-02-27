@@ -16,7 +16,7 @@ def tokenize_file_like(source):
 def tokenize_bytes(source):
     return list(woosh.tokenize(source, continue_on_error=True))
     
-    
+
 @pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
 @pytest.mark.parametrize('quote', data.ONELINE_STRING_QUOTES)
 def test_unterminated_one_line_string(tokenize, quote):

@@ -1,6 +1,7 @@
 
 # python
 import pathlib
+import platform
 from setuptools import Extension, find_packages, setup
 from setuptools.command.build_ext import build_ext
 
@@ -28,6 +29,7 @@ tokenizer = Extension(
         'src/typeobject.c',
     ],
     language='c',
+    extra_compile_args=['-fvisibility=hidden'] if platform.system() != 'Windows' else []
     #undef_macros=['NDEBUG'],
     #library_dirs=['F:\programs\microprofiler'],
     #libraries=['micro-profiler_x64'],
