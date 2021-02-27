@@ -121,6 +121,22 @@ def test_repr(type, value, start_line, start_column, end_line, end_column):
 
     
 def test_new_token():
+    with pytest.raises(TypeError):
+        woosh.Token()
+        
+    with pytest.raises(TypeError):
+        woosh.Token(woosh.OP, '', 0, 0, 0, 0, None)
+        
+    with pytest.raises(TypeError):
+        woosh.Token(
+            type=woosh.OP,
+            value='',
+            start_line=0,
+            start_column=0,
+            end_line=0,
+            end_column=0
+        )
+
     with pytest.raises(TypeError) as exinfo:
         woosh.Token(None, '', 0, 0, 0, 0)
     assert exinfo.value.args[0] == f'type must be woosh.Type'
