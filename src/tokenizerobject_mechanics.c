@@ -668,9 +668,6 @@ consume(
             }
         }
     }
-    // TODO: line creation can be optimized, start and end line is often the
-    // same, also many tokens appear on the same line, store the line object on
-    // the tokenizer so we're not constantly recreating it
     start_line = PyLong_FromSize_t(tokenizer->mechanics.start.line);
     if (!start_line){ goto error; }
     start_column = PyLong_FromSize_t(tokenizer->mechanics.start.column);
