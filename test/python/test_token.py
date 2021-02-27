@@ -144,3 +144,11 @@ def test_new_token():
     with pytest.raises(TypeError) as exinfo:
         woosh.Token(woosh.OP, '', 0, 0, 0, None)
     assert exinfo.value.args[0] == f'end_column must be int'
+
+    
+def test_cannot_subclass_token():
+    with pytest.raises(TypeError):
+        class MyToken(woosh.Token):
+            pass
+            
+    
