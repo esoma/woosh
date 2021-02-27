@@ -15,8 +15,19 @@ def tokenize_file_like(source):
     
 def tokenize_bytes(source):
     return list(woosh.tokenize(source))
-
     
+    
+def test_invalid_args():
+    with pytest.raises(TypeError):
+        woosh.tokenize()
+    
+    with pytest.raises(TypeError):
+        woosh.tokenize(b'', True)
+        
+    with pytest.raises(TypeError):
+        woosh.tokenize(source=b'', continue_on_error=True)
+    
+
 @pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
 def test_empty(tokenize):
     tokens = tokenize(''.encode('utf-8'))
