@@ -16,6 +16,8 @@ for directory, _, files in os.walk(DATA):
         continue
     directory = pathlib.Path(directory)
     for file in files:
+        if not file.endswith('.py'):
+            continue
         data_file = directory / file
         with open(data_file, 'rb') as f:
             source_bytes = f.read()
