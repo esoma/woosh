@@ -88,16 +88,17 @@ def test_readline_incorrect_type(invalid):
         list(woosh.tokenize(InvalidSource()))
     
     
+@pytest.mark.parametrize('good_line_count', [0, 1, 2, 5, 10])
 @pytest.mark.parametrize('weird', [
     '123',
     None,
     1,
     object()
 ])
-def test_weird_readline(weird):
+def test_weird_readline(good_line_count, weird):
     class InvalidSource:
         def __init__(self):
-            self.q = [b'123', weird]
+            self.q = ([b'123'] * good_line_count) + [weird]
         def tell(self):
             return 0
         def readline(self, size=-1):
