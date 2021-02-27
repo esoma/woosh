@@ -1,0 +1,11 @@
+extraction:
+
+  cpp:
+    index:
+      build_command: "python3 setup.py build"
+      
+  python:
+    index:
+      exclude:
+        - sample/
+        - test/
