@@ -402,7 +402,6 @@ reconcile_bom_and_encoding_comment(
     PyObject *encoding_comment
 )
 {
-    // TODO: error handling is bad
     assert(bom != BOM_ERROR);
     assert(encoding_comment);
 
