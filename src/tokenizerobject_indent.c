@@ -61,11 +61,15 @@ get_indent(WooshTokenizer *tokenizer)
 static WooshToken *
 indent(WooshTokenizer *tokenizer, size_t line_indent)
 {
-    if (!lifo_buffer_push(&tokenizer->indent.stack, &line_indent, sizeof(size_t)))
+    if (!lifo_buffer_push(
+        &tokenizer->indent.stack,
+        &line_indent,
+        sizeof(size_t)
+    ))
     {
         // LCOV_EXCL_START
-        // TODO: this should raise a memory error?
-        return error(tokenizer);
+        PyErr_NoMemory();
+        return 0;
         // LCOV_EXCL_STOP
     }
     return consume(
