@@ -177,8 +177,8 @@ WooshType_Add_(PyObject *module, const char* raw_name, unsigned char raw_value)
     PyTypeObject *type = state->type;
     assert(type);
 
+    // note: WooshType_NEW steals reference to name
     WooshType *self = WooshType_NEW(type, name, raw_value);
-    Py_DECREF(name);
     if (!self){ return 0; }
 
     if (PyModule_AddObject(module, raw_name, (PyObject *)self) < 0)
