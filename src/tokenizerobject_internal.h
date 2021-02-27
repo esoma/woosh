@@ -24,6 +24,17 @@ struct Position
     size_t character_index;
 };
 
+enum MechanicsStatus
+{
+    // indicates that the end of file in the source has not been reached
+    WOOSH_MECHANICS_BUFFERING = 0,
+    // indicates that the end of file in the buffer has not been reached
+    WOOSH_MECHANICS_BUFFERED = 1,
+    // indicates that the end of file has been reached -- there is no more data
+    // to process
+    WOOSH_MECHANICS_DONE = 2
+};
+
 // state for the "mechanics" of the tokenizer object
 //
 // mechanics mostly has to do with how the tokenizer reads the source and
@@ -44,8 +55,8 @@ struct Mechanics
     // the readline function for the source
     PyObject *readline;
     PyObject *readline_bytes;
-    // whether the end of the source has been reached
-    int eof;
+    // see MechanicsStatus
+    int status;
 };
 
 // state for the "parse" portion of the tokenizer object

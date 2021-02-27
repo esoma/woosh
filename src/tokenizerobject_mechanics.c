@@ -60,6 +60,8 @@ init_mechanics(WooshTokenizer *tokenizer)
         tokenizer->mechanics.readline_bytes = PyLong_FromLong(1024);
         if (!tokenizer->mechanics.readline_bytes){ return 0; }
     }
+    
+    tokenizer->mechanics.status = WOOSH_MECHANICS_BUFFERING;
 
     return 1;
 }
@@ -104,12 +106,12 @@ clear_mechanics(WooshTokenizer *self)
 
 // reads the next line from the source if the source is a "file-like" object
 //
-// returns 0 with mechanics.eof set if the end of file was reached
+// returns 0 with mechanics.status set if the end of file was reached
 static PyObject *
 load_line_file_like(WooshTokenizer *tokenizer)
 {
     assert(tokenizer);
-    assert(!tokenizer->mechanics.eof);
+    assert(tokenizer->mechanics.status == WOOSH_MECHANICS_BUFFERING);
     assert(tokenizer->mechanics.readline);
 #if PY_VERSION_HEX >= 0x03090000
     PyObject *line = PyObject_CallOneArg(
@@ -134,7 +136,7 @@ load_line_file_like(WooshTokenizer *tokenizer)
     }
     if (PyBytes_GET_SIZE(line) == 0)
     {
-        tokenizer->mechanics.eof = 1;
+        tokenizer->mechanics.status == WOOSH_MECHANICS_BUFFERED;
         return 0;
     }
     
@@ -158,7 +160,7 @@ static PyObject *
 load_line_bytes(WooshTokenizer *tokenizer)
 {
     assert(tokenizer);
-    assert(!tokenizer->mechanics.eof);
+    assert(tokenizer->mechanics.status == WOOSH_MECHANICS_BUFFERING);
     assert(!tokenizer->mechanics.readline);
     assert(PyBytes_Check(tokenizer->source));
 
@@ -170,7 +172,7 @@ load_line_bytes(WooshTokenizer *tokenizer)
     );
     if (line)
     {
-        tokenizer->mechanics.eof = 1;
+        tokenizer->mechanics.status = WOOSH_MECHANICS_BUFFERED;
     }
     return line;
 }
@@ -185,7 +187,7 @@ load_line(WooshTokenizer *tokenizer)
     assert(tokenizer);
     assert(tokenizer->source);
     assert(encoding(tokenizer));
-    if (tokenizer->mechanics.eof){ return 1; }
+    if (tokenizer->mechanics.status != WOOSH_MECHANICS_BUFFERING){ return 1; }
     
     PyObject *line;
     if (tokenizer->mechanics.readline)
@@ -198,8 +200,7 @@ load_line(WooshTokenizer *tokenizer)
     }
     if (!line)
     {
-        if (tokenizer->mechanics.eof){ return 1; }
-        return 0;
+        return tokenizer->mechanics.status != WOOSH_MECHANICS_BUFFERING;
     }
     if (!push(tokenizer, line))
     {
@@ -398,7 +399,7 @@ push(WooshTokenizer *tokenizer, PyObject *line)
 int
 advance_over_null(WooshTokenizer *tokenizer, int over_null)
 {
-    if (tokenizer->mechanics.eof == 2)
+    if (tokenizer->mechanics.status == WOOSH_MECHANICS_DONE)
     {
         return 1;
     }
@@ -406,7 +407,7 @@ advance_over_null(WooshTokenizer *tokenizer, int over_null)
     Py_UCS4 next_c = peek_is_null(tokenizer, 0, &is_null);
     if (next_c == 0 && !is_null && !PyErr_Occurred())
     {
-        tokenizer->mechanics.eof = 2;
+        tokenizer->mechanics.status = WOOSH_MECHANICS_DONE;
         return 1;
     }
     if (next_c == 0 && PyErr_Occurred()){ return 0; }
@@ -523,7 +524,7 @@ int
 at_eof(WooshTokenizer *tokenizer)
 {
     assert(tokenizer);
-    return tokenizer->mechanics.eof == 2;
+    return tokenizer->mechanics.status == WOOSH_MECHANICS_DONE;
 }
 
 // create a token of the specified type using the contents of the span
