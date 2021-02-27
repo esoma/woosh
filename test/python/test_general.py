@@ -39,8 +39,9 @@ def test_null_byte(tokenize):
 
 @pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
 @pytest.mark.parametrize('newline', data.NEWLINES)
-def test_line_continuation(tokenize, newline):
-    tokens = tokenize(f'xx\\{newline}yy'.encode('utf-8'))
+@pytest.mark.parametrize('post_whitespace', ['', ' ', '\t'])
+def test_line_continuation(tokenize, newline, post_whitespace):
+    tokens = tokenize(f'xx\\{post_whitespace}{newline}yy'.encode('utf-8'))
     expected = [
         woosh.Token(woosh.ENCODING, 'utf-8', 1, 0, 1, 0),
         woosh.Token(woosh.NAME, 'xx', 1, 0, 1, 2),
