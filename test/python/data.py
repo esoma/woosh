@@ -636,6 +636,12 @@ VALID_FLOAT_LITERALS = (
     )
 )
 INVALID_FLOAT_LITERALS = (
+    # `0._0`
+    #    ^ underscore right after decimal
+    *(
+        (f'{decimal}._{decimal}', f'{decimal}.')
+        for decimal in DECIMAL_VALUES
+    ),
     # `0.0_`
     #   ^ ends with underscore
     *(
