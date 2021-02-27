@@ -118,3 +118,29 @@ def test_repr(type, value, start_line, start_column, end_line, end_column):
         f'{start_line!r}:{start_column!r}-{end_line!r}:{end_column!r}>'
     )
     assert repr(token) == expected_repr
+
+    
+def test_new_token():
+    with pytest.raises(TypeError) as exinfo:
+        woosh.Token(None, '', 0, 0, 0, 0)
+    assert exinfo.value.args[0] == f'type must be woosh.Type'
+    
+    with pytest.raises(TypeError) as exinfo:
+        woosh.Token(woosh.OP, None, 0, 0, 0, 0)
+    assert exinfo.value.args[0] == f'value must be str'
+    
+    with pytest.raises(TypeError) as exinfo:
+        woosh.Token(woosh.OP, '', None, 0, 0, 0)
+    assert exinfo.value.args[0] == f'start_line must be int'
+    
+    with pytest.raises(TypeError) as exinfo:
+        woosh.Token(woosh.OP, '', 0, None, 0, 0)
+    assert exinfo.value.args[0] == f'start_column must be int'
+    
+    with pytest.raises(TypeError) as exinfo:
+        woosh.Token(woosh.OP, '', 0, 0, None, 0)
+    assert exinfo.value.args[0] == f'end_line must be int'
+    
+    with pytest.raises(TypeError) as exinfo:
+        woosh.Token(woosh.OP, '', 0, 0, 0, None)
+    assert exinfo.value.args[0] == f'end_column must be int'
