@@ -26,10 +26,15 @@ def tokenize_bytes(source):
 ])
 @pytest.mark.parametrize('encoding', [
     'ascii',
+    'ASCII',
     'utf-8',
+    'UTF-8',
     'utf8',
+    'UTF8',
     'latin-1',
+    'LATIN-1',
     'iso-8859-15',
+    'ISO-8859-15',
 ])
 @pytest.mark.parametrize('newline', ['\n', '\r\n'])
 def test_encoding_comment(tokenize, structure, encoding, newline):
@@ -119,10 +124,19 @@ def test_utf8_bom_encoding_non_utf8_comment_encoding(tokenize, encoding):
 @pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
 @pytest.mark.parametrize('encoding', [
     'utf-8',
+    'UTF-8',
     'utf8',
+    'UTF8',
 ])
-def test_utf8_bom_encoding_utf8_comment_encoding(tokenize, encoding):
-    comment = f'# coding={encoding}'
+@pytest.mark.parametrize('pre_space', [' ', '\f', '\t'])
+@pytest.mark.parametrize('space_count', [0, 1, 5])
+def test_utf8_bom_encoding_utf8_comment_encoding(
+    tokenize,
+    encoding,
+    pre_space,
+    space_count
+):
+    comment = f'#{pre_space * space_count}coding={encoding}'
     source = UTF8_BOM + comment.encode('utf-8')
     tokens = tokenize(source)
     expected = [

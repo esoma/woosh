@@ -93,6 +93,7 @@ int
 traverse_mechanics(WooshTokenizer *self, visitproc visit, void *arg)
 {
     Py_VISIT(self->mechanics.readline);
+    return 0;
 }
 
 void

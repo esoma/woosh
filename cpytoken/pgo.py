@@ -5,7 +5,6 @@
 # woosh
 import _woosh_cpytoken
 # python
-import io
 import os
 import pathlib
 

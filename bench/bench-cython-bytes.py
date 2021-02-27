@@ -1,7 +1,5 @@
 
 # cython
-import Cython
-import Cython.Plex.Errors
 from Cython.Utils import (
     detect_opened_file_encoding as cython_detect_opened_file_encoding,
 )

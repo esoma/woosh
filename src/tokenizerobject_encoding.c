@@ -264,7 +264,7 @@ check_encoding_comment(WooshTokenizer *tokenizer)
                         }
                         if (c2 != '\n'){ phase = DONE; }
                     }
-                    else if (c != ' ' || c != '\t' || c !='\f')
+                    else if (c == ' ' || c == '\t' || c == '\f')
                     {
                         phase = DONE;
                     }
@@ -412,13 +412,17 @@ reconcile_bom_and_encoding_comment(
     // an error if they do not
     if (bom == BOM_UTF8 && encoding_comment != Py_None)
     {
-        PyObject *ascii_encoding_comment = PyUnicode_AsASCIIString(
-            encoding_comment
+        PyObject *encoding_comment_lower = PyObject_CallMethod(
+            encoding_comment, "lower", 0
         );
+        if (!encoding_comment_lower){ return 0; }
+        PyObject *ascii_encoding_comment = PyUnicode_AsASCIIString(
+            encoding_comment_lower
+        );
+        Py_DECREF(encoding_comment_lower);
         if (!ascii_encoding_comment){ return 0; }
         char *c_encoding_comment = PyBytes_AS_STRING(ascii_encoding_comment);
         if (
-            // TODO: pretty sure this list is not complete
             strcmp(c_encoding_comment, "utf-8") != 0 &&
             strcmp(c_encoding_comment, "utf8") != 0
         )
