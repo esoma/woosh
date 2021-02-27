@@ -56,7 +56,6 @@ init_mechanics(WooshTokenizer *tokenizer)
             );
             return 0;
         }
-        // TODO: make the line size customizeable and allow full read?
         tokenizer->mechanics.readline_bytes = PyLong_FromLong(1024);
         if (!tokenizer->mechanics.readline_bytes){ return 0; }
     }
