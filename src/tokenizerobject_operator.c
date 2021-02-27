@@ -153,3 +153,10 @@ operator(WooshTokenizer *tokenizer)
     assert(review(tokenizer, 0) != 0);
     return consume(tokenizer, tokenizer->operator_type, 0);
 }
+
+WooshToken *
+operator_value(WooshTokenizer *tokenizer, PyObject *value)
+{
+    assert(value);
+    return consume(tokenizer, tokenizer->operator_type, value);
+}

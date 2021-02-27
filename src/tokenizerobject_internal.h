@@ -104,6 +104,14 @@ struct Groups
     // stack of current opening group characters: (, [, {
     // these are stored as a char
     LifoBuffer stack;
+    PyObject *lpar;
+    PyObject *rpar;
+    
+    PyObject *lsqr;
+    PyObject *rsqr;
+    
+    PyObject *lbrc;
+    PyObject *rbrc;
 };
 
 // state for the "indent" portion of the tokenizer object
@@ -203,6 +211,7 @@ WooshToken *parse_open_operator(WooshTokenizer *);
 WooshToken *parse_close_operator(WooshTokenizer *);
 // tokenizerobject_operator.c
 WooshToken *operator(WooshTokenizer *);
+WooshToken *operator_value(WooshTokenizer *, PyObject *);
 WooshToken *parse_dot(WooshTokenizer *);
 WooshToken *parse_operator_equal_follows(WooshTokenizer *);
 WooshToken *parse_operator_double_equal_follows(WooshTokenizer *);

@@ -9,10 +9,6 @@
 // indentation behavior also changes based on whether we're in a group or not
 // (indentation does not change while inside a group)
 
-// TODO: the token values can be cached on the module and reused, rather than
-// generating new strings from the source -- this should be a memory and speed
-// improvement
-
 // python
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
@@ -31,6 +27,21 @@ init_groups(WooshTokenizer *tokenizer)
         PyErr_NoMemory();
         return 0;
     }
+    
+    tokenizer->groups.lpar = PyUnicode_FromString("(");
+    if (!tokenizer->groups.lpar){ return 0; }
+    tokenizer->groups.rpar = PyUnicode_FromString(")");
+    if (!tokenizer->groups.rpar){ return 0; }
+    
+    tokenizer->groups.lsqr = PyUnicode_FromString("[");
+    if (!tokenizer->groups.lsqr){ return 0; }
+    tokenizer->groups.rsqr = PyUnicode_FromString("]");
+    if (!tokenizer->groups.rsqr){ return 0; }
+    
+    tokenizer->groups.lbrc = PyUnicode_FromString("{");
+    if (!tokenizer->groups.lbrc){ return 0; }
+    tokenizer->groups.rbrc = PyUnicode_FromString("}");
+    if (!tokenizer->groups.rbrc){ return 0; }
 
     return 1;
 }
@@ -40,6 +51,15 @@ dealloc_groups(WooshTokenizer *tokenizer)
 {
     assert(tokenizer);
     lifo_buffer_delete(&tokenizer->groups.stack);
+    
+    Py_CLEAR(tokenizer->groups.lpar);
+    Py_CLEAR(tokenizer->groups.rpar);
+    
+    Py_CLEAR(tokenizer->groups.lsqr);
+    Py_CLEAR(tokenizer->groups.rsqr);
+    
+    Py_CLEAR(tokenizer->groups.lbrc);
+    Py_CLEAR(tokenizer->groups.rbrc);
 }
 
 // push a group character onto the stack
@@ -88,7 +108,17 @@ parse_open_operator(WooshTokenizer *tokenizer)
         PyErr_NoMemory();
         return 0;
     }
-    return operator(tokenizer);
+    switch(start_c)
+    {
+        case '(':
+            return operator_value(tokenizer, tokenizer->groups.lpar);
+        case '[':
+            return operator_value(tokenizer, tokenizer->groups.lsqr);
+        case '{':
+            return operator_value(tokenizer, tokenizer->groups.lbrc);
+    }
+    assert(0);
+    return 0;
 }
 
 // parse an operator which ends a group
@@ -127,5 +157,17 @@ parse_close_operator(WooshTokenizer *tokenizer)
         return error(tokenizer); // TODO: close token does not match
     }
     pop_group(tokenizer);
-    return operator(tokenizer);
+    // we're using open_c here instead of start_c because (I believe?) the
+    // compiler can more easily optimize this
+    switch(open_c)
+    {
+        case '(':
+            return operator_value(tokenizer, tokenizer->groups.rpar);
+        case '[':
+            return operator_value(tokenizer, tokenizer->groups.rsqr);
+        case '{':
+            return operator_value(tokenizer, tokenizer->groups.rbrc);
+    }
+    assert(0);
+    return 0;
 }

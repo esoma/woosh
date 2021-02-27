@@ -17,8 +17,8 @@ def bench(func):
             data_file = directory / file
             with open(data_file, 'rb') as f:
                 source = f.read()
-                # this is for the Cython tokenizer, which chokes if it encounters
-                # \r
+                # this is for the Cython tokenizer, which chokes if it
+                # encounters '\r'
                 source = source.replace(b'\r\n', b'\n')
                 source_file = io.BytesIO(source)
             def _():
