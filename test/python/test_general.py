@@ -48,6 +48,7 @@ def test_null_byte(tokenize):
     ]
     assert tokens == expected
 
+    
 @pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
 @pytest.mark.parametrize('newline', data.NEWLINES)
 @pytest.mark.parametrize('post_whitespace', ['', ' ', '\t'])
@@ -62,6 +63,7 @@ def test_line_continuation(tokenize, newline, post_whitespace):
     ]
     assert tokens == expected
 
+    
 @pytest.mark.parametrize('tokenize', [tokenize_file_like, tokenize_bytes])
 @pytest.mark.parametrize('literal', [
     '# hello',
