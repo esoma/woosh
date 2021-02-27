@@ -31,7 +31,7 @@ woosh_type_new(PyTypeObject *cls, PyObject *args, PyObject *kwds)
     if (!PyArg_ParseTupleAndKeywords(
         args, kwds, "OO|", kwlist,
         &name, &value
-    )){ return 0; } // LCOV_EXCL_LINE
+    )){ return 0; }
 
     return WooshType_New(name, value);
 }

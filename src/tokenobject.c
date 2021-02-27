@@ -40,7 +40,7 @@ woosh_token_new(PyTypeObject *cls, PyObject *args, PyObject *kwds)
     if (!PyArg_ParseTupleAndKeywords(
         args, kwds, "OOOOOO|", kwlist,
         &type, &value, &start_line, &start_column, &end_line, &end_column
-    )){ return 0; } // LCOV_EXCL_LINE
+    )){ return 0; }
 
     return WooshToken_New(
         type, value,

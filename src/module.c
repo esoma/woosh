@@ -20,7 +20,7 @@ woosh_module_tokenize(PyObject *self, PyObject *args, PyObject *kwargs)
         keywords,
         &source,
         &continue_on_error
-    )){ return 0; };  // LCOV_EXCL_LINE
+    )){ return 0; };
     return (PyObject *)WooshTokenizer_New_(self, source, continue_on_error);
 }
 
