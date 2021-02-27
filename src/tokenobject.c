@@ -40,7 +40,7 @@ woosh_token_new(PyTypeObject *cls, PyObject *args, PyObject *kwds)
     if (!PyArg_ParseTupleAndKeywords(
         args, kwds, "OOOOOO|", kwlist,
         &type, &value, &start_line, &start_column, &end_line, &end_column
-    )){ return 0; }
+    )){ return 0; } // LCOV_EXCL_LINE
 
     return WooshToken_New(
         type, value,
@@ -192,8 +192,10 @@ WooshToken_Initialize_(PyObject *module)
     // decrements the reference count of value on success.
     if (PyModule_AddObject(module, "Token", (PyObject *)type) < 0)
     {
+        // LCOV_EXCL_START
         Py_DECREF(type);
         return 0;
+        // LCOV_EXCL_STOP
     }
     return type;
 }
@@ -295,6 +297,7 @@ WooshToken_NEW(
     WooshToken *self = (WooshToken *)PyType_GenericAlloc(py_type, 0);
     if (!self)
     {
+        // LCOV_EXCL_START
         Py_DECREF(type);
         Py_DECREF(value);
         Py_DECREF(start_line);
@@ -302,6 +305,7 @@ WooshToken_NEW(
         Py_DECREF(end_line);
         Py_DECREF(end_column);
         return 0;
+        // LCOV_EXCL_STOP
     }
 
     self->type = type;

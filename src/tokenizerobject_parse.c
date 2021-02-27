@@ -376,6 +376,7 @@ parse(WooshTokenizer *tokenizer)
             break;
         }
 
+        // TODO: move this to a function in tokenizerobject_group
         char open_group = peek_group(tokenizer);
         if (open_group != 0)
         {
@@ -392,8 +393,10 @@ parse(WooshTokenizer *tokenizer)
                 case '{':
                     close_group = '}';
                     break;
+                // LCOV_EXCL_START
                 default:
                     assert(0);
+                // LCOV_EXCL_STOP
             }
             return yield_token(tokenizer, error_format(
                 tokenizer,

@@ -375,8 +375,10 @@ check_encoding_comment(WooshTokenizer *tokenizer)
                 );
                 if (!encoding)
                 {
+                    // LCOV_EXCL_START
                     Py_DECREF(line);
                     return 0;
+                    // LCOV_EXCL_STOP
                 }
             }
             Py_DECREF(line);
@@ -433,8 +435,10 @@ reconcile_bom_and_encoding_comment(
             );
             if (!token_value)
             {
+                // LCOV_EXCL_START
                 Py_DECREF(ascii_encoding_comment);
                 return 0;
+                // LCOV_EXCL_STOP
             }
         }
         Py_DECREF(ascii_encoding_comment);
@@ -507,8 +511,10 @@ parse_encoding(WooshTokenizer *tokenizer)
         );
         if (!tokenizer->encoding.name)
         {
+            // LCOV_EXCL_START
             Py_DECREF(token);
             return 0;
+            // LCOV_EXCL_STOP
         }
         // check that the encoding can be used to decode a byte string
         {

@@ -25,8 +25,10 @@ init_indent(WooshTokenizer *tokenizer)
     assert(tokenizer);
     if (!lifo_buffer_new(&tokenizer->indent.stack, sizeof(char) * 10))
     {
+        // LCOV_EXCL_START
         PyErr_NoMemory();
         return 0;
+        // LCOV_EXCL_STOP
     }
     assert(tokenizer->indent.dedents_pending == 0);
     return 1;
@@ -61,8 +63,10 @@ indent(WooshTokenizer *tokenizer, size_t line_indent)
 {
     if (!lifo_buffer_push(&tokenizer->indent.stack, &line_indent, sizeof(size_t)))
     {
+        // LCOV_EXCL_START
         // TODO: this should raise a memory error?
         return error(tokenizer);
+        // LCOV_EXCL_STOP
     }
     return consume(
         tokenizer,
@@ -157,10 +161,7 @@ parse_line_start(WooshTokenizer *tokenizer)
             Py_INCREF(Py_None);
             return (WooshToken *)Py_None;
         }
-        else if (PyErr_Occurred())
-        {
-            return 0;
-        }
+        else if (PyErr_Occurred()){ return 0; }
     }
     // whitespace makes up indents
     // we'll need to count the whitespaces and how much indent they create,

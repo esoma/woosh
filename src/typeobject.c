@@ -31,7 +31,7 @@ woosh_type_new(PyTypeObject *cls, PyObject *args, PyObject *kwds)
     if (!PyArg_ParseTupleAndKeywords(
         args, kwds, "OO|", kwlist,
         &name, &value
-    )){ return 0; }
+    )){ return 0; } // LCOV_EXCL_LINE
 
     return WooshType_New(name, value);
 }
@@ -148,8 +148,10 @@ WooshType_Initialize_(PyObject *module)
     // decrements the reference count of value on success.
     if (PyModule_AddObject(module, "Type", (PyObject *)type) < 0)
     {
+        // LCOV_EXCL_START
         Py_DECREF(type);
         return 0;
+        // LCOV_EXCL_STOP
     }
     return type;
 }
@@ -176,16 +178,15 @@ WooshType_Add_(PyObject *module, const char* raw_name, unsigned char raw_value)
     assert(type);
 
     WooshType *self = WooshType_NEW(type, name, raw_value);
-    if (!self)
-    {
-        Py_DECREF(name);
-        return 0;
-    }
+    Py_DECREF(name);
+    if (!self){ return 0; }
 
     if (PyModule_AddObject(module, raw_name, (PyObject *)self) < 0)
     {
+        // LCOV_EXCL_START
         Py_DECREF(self);
         return 0;
+        // LCOV_EXCL_STOP
     }
 
     return self;
@@ -263,16 +264,20 @@ WooshType_NEW(PyTypeObject *py_type, PyObject *name, unsigned char raw_value)
     WooshType *self = (WooshType *)PyType_GenericAlloc(py_type, 0);
     if (!self)
     {
+        // LCOV_EXCL_START
         Py_DECREF(name);
         return 0;
+        // LCOV_EXCL_STOP
     }
 
     PyObject *value = PyUnicode_FromFormat("%d", raw_value);
     if (!value)
     {
+        // LCOV_EXCL_START
         Py_DECREF(self);
         Py_DECREF(name);
         return 0;
+        // LCOV_EXCL_STOP
     }
 
     self->name = name;

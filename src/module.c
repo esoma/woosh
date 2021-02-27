@@ -20,7 +20,7 @@ woosh_module_tokenize(PyObject *self, PyObject *args, PyObject *kwargs)
         keywords,
         &source,
         &continue_on_error
-    )){ return 0; };
+    )){ return 0; };  // LCOV_EXCL_LINE
     return (PyObject *)WooshTokenizer_New_(self, source, continue_on_error);
 }
 
@@ -104,9 +104,11 @@ PyInit__woosh()
     }
 
     return module;
+    // LCOV_EXCL_START
 error:
     Py_CLEAR(module);
     return 0;
+    // LCOV_EXCL_STOP
 }
 
 PyObject *

@@ -79,10 +79,12 @@ fifo_buffer_new(FifoBuffer *buffer, size_t size_hint)
     buffer->buffer = malloc(size_hint);
     if (!buffer->buffer)
     {
+        // LCOV_EXCL_START
         buffer->size = 0;
         buffer->start = 0;
         buffer->end = 0;
         return 0;
+        // LCOV_EXCL_STOP
     }
     buffer->size = size_hint;
     buffer->start = buffer->buffer;

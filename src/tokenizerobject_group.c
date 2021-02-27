@@ -24,8 +24,10 @@ init_groups(WooshTokenizer *tokenizer)
 
     if (!lifo_buffer_new(&tokenizer->groups.stack, sizeof(char) * 10))
     {
+        // LCOV_EXCL_START
         PyErr_NoMemory();
         return 0;
+        // LCOV_EXCL_STOP
     }
     
     tokenizer->groups.lpar = PyUnicode_FromString("(");
@@ -105,8 +107,10 @@ parse_open_operator(WooshTokenizer *tokenizer)
     assert(review(tokenizer, 1) == 0);
     if (!push_group(tokenizer, start_c))
     {
+        // LCOV_EXCL_START
         PyErr_NoMemory();
         return 0;
+        // LCOV_EXCL_STOP
     }
     switch(start_c)
     {
@@ -117,8 +121,10 @@ parse_open_operator(WooshTokenizer *tokenizer)
         case '{':
             return operator_value(tokenizer, tokenizer->groups.lbrc);
     }
+    // LCOV_EXCL_START
     assert(0);
     return 0;
+    // LCOV_EXCL_STOP
 }
 
 // parse an operator which ends a group
@@ -148,9 +154,11 @@ parse_close_operator(WooshTokenizer *tokenizer)
         case '{':
             match_c = '}';
             break;
+        // LCOV_EXCL_START
         default:
             assert(0);
             break;
+        // LCOV_EXCL_STOP
     }
     if (start_c != match_c)
     {
@@ -168,6 +176,8 @@ parse_close_operator(WooshTokenizer *tokenizer)
         case '{':
             return operator_value(tokenizer, tokenizer->groups.rbrc);
     }
+    // LCOV_EXCL_START
     assert(0);
     return 0;
+    // LCOV_EXCL_STOP
 }

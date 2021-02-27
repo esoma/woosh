@@ -25,8 +25,10 @@ init_mechanics(WooshTokenizer *tokenizer)
         sizeof(PyObject *) * 10
     ))
     {
+        // LCOV_EXCL_START
         PyErr_NoMemory();
         return 0;
+        // LCOV_EXCL_STOP
     }
     tokenizer->mechanics.start.line = 1;
     assert(tokenizer->mechanics.start.column == 0);
@@ -203,8 +205,10 @@ load_line(WooshTokenizer *tokenizer)
     }
     if (!push(tokenizer, line))
     {
+        // LCOV_EXCL_START
         Py_DECREF(line);
         return 0;
+        // LCOV_EXCL_STOP
     }
     return 1;
 }
@@ -377,8 +381,10 @@ push(WooshTokenizer *tokenizer, PyObject *line)
         &line, sizeof(PyObject *)
     ))
     {
+        // LCOV_EXCL_START
         PyErr_NoMemory();
         return 0;
+        // // LCOV_EXCL_STOP
     }
     return 1;
 }
@@ -644,7 +650,7 @@ consume(
                 *start,
                 tokenizer->mechanics.start.character_index,
                 i_position
-            ) == -1){ goto error; }
+            ) == -1){ goto error; } // LCOV_EXCL_LINE
             // copy the lines in between the start and end
             for (size_t i = 1; i < tokenizer->mechanics.end.line_index; i++)
             {
@@ -664,7 +670,7 @@ consume(
                     *(end - 1),
                     0,
                     tokenizer->mechanics.end.character_index
-                ) == -1){ goto error; }
+                ) == -1){ goto error; } // LCOV_EXCL_LINE
             }
         }
     }
@@ -687,6 +693,7 @@ consume(
         start_line, start_column,
         end_line, end_column
     );
+    // LCOV_EXCL_START
 error:
     Py_CLEAR(value);
     Py_CLEAR(start_line);
@@ -694,6 +701,7 @@ error:
     Py_CLEAR(end_line);
     Py_CLEAR(end_column);
     return 0;
+    // LCOV_EXCL_STOP
 }
 
 // shortcut for creating an error token
