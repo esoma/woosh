@@ -82,3 +82,39 @@ def test_invalid_attribute():
     token = tokenize(b'hello')
     with pytest.raises(AttributeError):
         token.not_an_attribute
+        
+    
+@pytest.mark.parametrize('type', [
+    woosh.COMMENT,
+    woosh.DEDENT,
+    woosh.ENCODING,
+    woosh.EOF,
+    woosh.ERROR,
+    woosh.INDENT,
+    woosh.NAME,
+    woosh.NEWLINE,
+    woosh.NUMBER,
+    woosh.OP,
+    woosh.STRING,
+])
+@pytest.mark.parametrize('value', [
+    '',
+    'hello',
+    '"hello"',
+    '\'hello\'',
+])
+@pytest.mark.parametrize('start_line', [0, 1, 100])
+@pytest.mark.parametrize('start_column', [0, 1, 100])
+@pytest.mark.parametrize('end_line', [0, 1, 100])
+@pytest.mark.parametrize('end_column', [0, 1, 100])
+def test_repr(type, value, start_line, start_column, end_line, end_column):
+    token = woosh.Token(
+        type, value,
+        start_line, start_column,
+        end_line, end_column
+    )
+    expected_repr = (
+        f'<Token {type!r} {value!r} '
+        f'{start_line!r}:{start_column!r}-{end_line!r}:{end_column!r}>'
+    )
+    assert repr(token) == expected_repr
