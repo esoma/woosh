@@ -270,7 +270,7 @@ WooshType_NEW(PyTypeObject *py_type, PyObject *name, unsigned char raw_value)
         // LCOV_EXCL_STOP
     }
 
-    PyObject *value = PyUnicode_FromFormat("%d", raw_value);
+    PyObject *value = PyLong_FromLong(raw_value);
     if (!value)
     {
         // LCOV_EXCL_START
