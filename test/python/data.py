@@ -511,6 +511,20 @@ INVALID_DECIMAL_LITERALS = (
             EXPONENT_SIGNS
         )
     ),
+    # `0e+_0`
+    #     ^ exponent sign is followed by underscore
+    *(
+        (
+            f'{decimal}{exponent_sigil}{exponent_sign}_{decimal}',
+            f'{decimal}{exponent_sigil}{exponent_sign}'
+        )
+        for decimal, exponent_sigil, exponent_sign
+        in itertools.product(
+            DECIMAL_VALUES,
+            EXPONENT_SIGILS,
+            EXPONENT_SIGNS
+        )
+    ),
     # `0_i`
     #   ^ imaginary after underscore
     *(
