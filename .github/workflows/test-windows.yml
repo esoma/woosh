@@ -34,7 +34,7 @@ jobs:
       run: |
         python setup.py build_ext -UNDEBUG install
         cd test/c
-        build-msvc.bat
+        cmd /r build-msvc.bat
         cd ../..
         
     - name: Python Tests
@@ -47,5 +47,5 @@ jobs:
     - name: C Tests
       run: |
         cd test/c
-        test.bat
+        cmd /r test.bat
         cd ../..
