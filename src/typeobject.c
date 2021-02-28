@@ -78,11 +78,7 @@ woosh_type_getattro(WooshType *self, PyObject *py_attr)
 static PyObject *
 woosh_type_richcompare(WooshType *self, PyObject *unk_other, int op)
 {
-    if (PyUnicode_Check(unk_other))
-    {
-        return PyObject_RichCompare((PyObject *)self->value, unk_other, op);
-    }
-    else if (WooshType_Check(unk_other) && (op == Py_EQ || op == Py_NE))
+    if (WooshType_Check(unk_other) && (op == Py_EQ || op == Py_NE))
     {
         WooshType *other = (WooshType*)unk_other;
         int cmp = self->raw_value == other->raw_value;
