@@ -1,0 +1,18 @@
+{% extends "!layout.html" %}
+
+{% block rootrellink %}
+    {% if theme_root_include_title %}
+    <a href="{{ pathto('index') }}">{{ shorttitle }}</a>{{ reldelim1 }}
+    {% endif %}
+{% endblock %}
+
+{% block footer %}
+    <div class="footer">
+    &copy; {% trans %}Copyright{% endtrans %} {{ copyright|e }}.
+    <br />
+
+    {% trans last_updated=last_updated|e %}Last updated on {{ last_updated }}.{% endtrans %}
+
+    {% trans sphinx_version=sphinx_version|e %}Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> {{ sphinx_version }}.{% endtrans %}
+    </div>
+{% endblock %}
