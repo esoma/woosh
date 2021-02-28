@@ -39,6 +39,7 @@ jobs:
       run: |
         python setup.py build_ext --gcov --no-optimization -UNDEBUG install
         cd test/c
+        chmod a+x build-gcc.sh
         ./build-gcc.sh
         cd ../..
         
@@ -49,6 +50,7 @@ jobs:
     - name: C Tests
       run: |
         cd test/c
+        chmod a+x test.sh
         ./test.sh
         cd ../..
 
