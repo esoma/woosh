@@ -6,13 +6,15 @@
 
 int main()
 {
+    fprintf(stderr, "test_lifobuffer...");
+    
     int input;
     const int *output;
 
     LifoBuffer lb;
     if (!lifo_buffer_new(&lb, sizeof(int)))
     {
-        fprintf(stderr, "failed to create buffer");
+        fprintf(stderr, "failed to create buffer\n");
         return EXIT_FAILURE;
     }
     assert(lb.size == sizeof(int));
@@ -20,7 +22,7 @@ int main()
     input = 100;
     if (!lifo_buffer_push(&lb, &input, sizeof(int)))
     {
-        fprintf(stderr, "failed to add 100 to buffer");
+        fprintf(stderr, "failed to add 100 to buffer\n");
         return EXIT_FAILURE;
     }
     assert(lb.size == sizeof(int));
@@ -32,7 +34,7 @@ int main()
     input = 99;
     if (!lifo_buffer_push(&lb, &input, sizeof(int)))
     {
-        fprintf(stderr, "failed to add 99 to buffer");
+        fprintf(stderr, "failed to add 99 to buffer\n");
         return EXIT_FAILURE;
     }
     assert(lb.size == sizeof(int) * 2);
@@ -49,5 +51,7 @@ int main()
     assert(*output == 100);
 
     lifo_buffer_delete(&lb);
+    
+    fprintf(stderr, "passed\n");
     return EXIT_SUCCESS;
 }

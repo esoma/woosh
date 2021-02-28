@@ -6,10 +6,12 @@
 
 int main()
 {
+    fprintf(stderr, "test_fifobuffer...");
+    
     FifoBuffer fb;
     if (!fifo_buffer_new(&fb, sizeof(char) * 5))
     {
-        fprintf(stderr, "failed to create buffer");
+        fprintf(stderr, "failed to create buffer\n");
         return EXIT_FAILURE;
     }
     assert(fb.size == sizeof(char) * 5);
@@ -20,10 +22,12 @@ int main()
     assert(start);
     assert(end);
     assert(start == end);
+    
+    assert(fifo_buffer_is_empty(&fb));
 
     if (!fifo_buffer_push(&fb, "h", sizeof(char) * 1))
     {
-        fprintf(stderr, "failed to add 'h' to buffer");
+        fprintf(stderr, "failed to add 'h' to buffer\n");
         return EXIT_FAILURE;
     }
     assert(fb.size == sizeof(char) * 5);
@@ -35,10 +39,12 @@ int main()
     assert(end);
     assert(start + 1 == end);
     assert(*start == 'h');
+    
+    assert(!fifo_buffer_is_empty(&fb));
 
     if (!fifo_buffer_push(&fb, "ello", sizeof(char) * 4))
     {
-        fprintf(stderr, "failed to add 'ello' to buffer");
+        fprintf(stderr, "failed to add 'ello' to buffer\n");
         return EXIT_FAILURE;
     }
     assert(fb.size == sizeof(char) * 5);
@@ -54,10 +60,12 @@ int main()
     assert(start[2] == 'l');
     assert(start[3] == 'l');
     assert(start[4] == 'o');
+    
+    assert(!fifo_buffer_is_empty(&fb));
 
     if (!fifo_buffer_push(&fb, " world", sizeof(char) * 6))
     {
-        fprintf(stderr, "failed to add ' world' to buffer");
+        fprintf(stderr, "failed to add ' world' to buffer\n");
         return EXIT_FAILURE;
     }
     assert(fb.size == sizeof(char) * 11);
@@ -79,6 +87,8 @@ int main()
     assert(start[8] == 'r');
     assert(start[9] == 'l');
     assert(start[10] == 'd');
+    
+    assert(!fifo_buffer_is_empty(&fb));
 
     fifo_buffer_pop(&fb, 1);
     assert(fb.size == sizeof(char) * 11);
@@ -99,10 +109,12 @@ int main()
     assert(start[7] == 'r');
     assert(start[8] == 'l');
     assert(start[9] == 'd');
+    
+    assert(!fifo_buffer_is_empty(&fb));
 
     if (!fifo_buffer_push(&fb, "X", sizeof(char) * 1))
     {
-        fprintf(stderr, "failed to add 'X' to buffer");
+        fprintf(stderr, "failed to add 'X' to buffer\n");
         return EXIT_FAILURE;
     }
     assert(fb.size == sizeof(char) * 11);
@@ -124,7 +136,11 @@ int main()
     assert(start[8] == 'l');
     assert(start[9] == 'd');
     assert(start[10] == 'X');
+    
+    assert(!fifo_buffer_is_empty(&fb));
 
     fifo_buffer_delete(&fb);
+    
+    fprintf(stderr, "passed\n");
     return EXIT_SUCCESS;
 }
