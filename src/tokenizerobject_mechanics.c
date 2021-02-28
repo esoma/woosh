@@ -137,7 +137,7 @@ load_line_file_like(WooshTokenizer *tokenizer)
     }
     if (PyBytes_GET_SIZE(line) == 0)
     {
-        tokenizer->mechanics.status == WOOSH_MECHANICS_BUFFERED;
+        tokenizer->mechanics.status = WOOSH_MECHANICS_BUFFERED;
         return 0;
     }
     
