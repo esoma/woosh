@@ -14,6 +14,7 @@ tokenizer = Extension(
     include_dirs=['src', 'inc'],
     sources=[
         'src/fifobuffer.c',
+        'src/lifobuffer.c',
         'src/module.c',
         'src/modulestate.c',
         'src/tokenizerobject.c',

@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 project(WooshTests)
 
 add_executable(test_fifobuffer ../src/fifobuffer.c test_fifobuffer.c)
-add_executable(test_lifobuffer test_lifobuffer.c)
+add_executable(test_lifobuffer ../src/lifobuffer.c test_lifobuffer.c)
 
 target_include_directories(test_fifobuffer PUBLIC
                            "../src/")
