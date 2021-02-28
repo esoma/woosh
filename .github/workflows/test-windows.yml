@@ -36,4 +36,7 @@ jobs:
         
     - name: Test
       run: |
-        python -m pytest -p no:cacheprovider -s
+        # the github runners for the windows workflow seem to run oom, so we'll
+        # split each invocation of pytest between the files
+        dir /b/s test_*.py > testfiles
+        for /F "tokens=*" %A in (testfiles) do python -m pytest -p no:cacheprovider -s %A
