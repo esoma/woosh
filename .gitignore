@@ -5,11 +5,13 @@
 
 .cache/
 build/
+*.obj
 
 # msvc stuff
 *.pdb
 *.pgc
 *.pgd
+*.exe
 
 # gcc
 *.gcov

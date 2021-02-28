@@ -33,10 +33,19 @@ jobs:
     - name: Build
       run: |
         python setup.py build_ext -UNDEBUG install
+        cd test/c
+        build-msvc.bat
+        cd ../..
         
-    - name: Test
+    - name: Python Tests
       run: |
         # the github runners for the windows workflow seem to run oom, so we'll
         # split each invocation of pytest between the files
         cmd /r dir /b /s test_*.py > testfiles
         foreach ($test in get-content "testfiles") {python -m pytest -p no:cacheprovider -s $test}
+
+    - name: C Tests
+      run: |
+        cd test/c
+        test.bat
+        cd ../..
