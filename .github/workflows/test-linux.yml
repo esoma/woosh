@@ -38,10 +38,19 @@ jobs:
     - name: Build
       run: |
         python setup.py build_ext --gcov --no-optimization -UNDEBUG install
+        cd test/c
+        ./build-gcc.sh
+        cd ../..
         
-    - name: Test
+    - name: Python Tests
       run: |
         gdb -return-child-result -batch -ex "run" -ex "bt" --args python3 -m pytest -p no:cacheprovider -s
+        
+    - name: C Tests
+      run: |
+        cd test/c
+        ./test.sh
+        cd ../..
 
     - name: Codecov
       uses: codecov/codecov-action@v1.2.1

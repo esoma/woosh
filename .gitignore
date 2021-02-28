@@ -13,3 +13,5 @@ build/
 
 # gcc
 *.gcov
+*.gcno
+*.gcda
