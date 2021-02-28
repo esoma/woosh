@@ -6,7 +6,7 @@ from setuptools import Extension, find_packages, setup
 from setuptools.command.build_ext import build_ext
 
 REPO = pathlib.Path(__file__).parent.absolute()
-with open(REPO / 'README.md') as f:
+with open(REPO / 'README.md', encoding='utf8') as f:
     long_description = f.read()
     
 tokenizer = Extension(
