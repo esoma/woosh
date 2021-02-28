@@ -1,0 +1,1 @@
+`generate.py` is used to generate some files using unicode database properties.
