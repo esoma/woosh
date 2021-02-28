@@ -1,3 +1,4 @@
+/* Taken verbatim from CPython, see PYTHON-LICENSE. */
 
 /* Tokenizer implementation */
 

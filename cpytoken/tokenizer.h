@@ -1,3 +1,5 @@
+/* Taken verbatim from CPython, see PYTHON-LICENSE. */
+
 #ifndef Py_TOKENIZER_H
 #define Py_TOKENIZER_H
 #ifdef __cplusplus
