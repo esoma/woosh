@@ -38,5 +38,5 @@ jobs:
       run: |
         # the github runners for the windows workflow seem to run oom, so we'll
         # split each invocation of pytest between the files
-        dir /b/s test_*.py > testfiles
+        cmd /r dir /b /s test_*.py > testfiles
         foreach ($test in get-content "testfiles") {python -m pytest -p no:cacheprovider -s $test}
