@@ -1,2 +1,2 @@
 
-python-docs-theme=2020.12
+python-docs-theme==2020.12
