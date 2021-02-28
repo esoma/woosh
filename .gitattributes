@@ -1,3 +1,5 @@
 
 *.h linguist-language=C
-sample/*.py linguist-vendored
+sample/**/*.py linguist-vendored
+test/python/ucd.py linguist-generated
+src/unicode.h linguist-generated

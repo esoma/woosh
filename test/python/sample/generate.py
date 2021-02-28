@@ -10,6 +10,7 @@ DIR = pathlib.Path(__file__).parent.absolute()
 ROOT = (DIR / '../../../').resolve()
 SAMPLE_DIR = ROOT / 'sample'
 
+test_files = []
 
 for directory, _, files in os.walk(SAMPLE_DIR):
     directory = pathlib.Path(directory)
@@ -61,5 +62,15 @@ for directory, _, files in os.walk(SAMPLE_DIR):
         with open(test_file_dir / '__init__.py', 'w') as f:
             pass
         test_file = test_file_dir / f'test_{sample_file_relative_sample.name}'
+        test_files.append(test_file)
         with open(test_file, 'wb') as f:
             f.write(template.encode(tokens[0].value))
+
+            
+with open(DIR / '.gitattributes', 'w') as f:
+    f.write('\n')
+    for test_file in test_files:
+        test_file = str(pathlib.PurePosixPath(
+            pathlib.Path(test_file).relative_to(DIR)
+        ))
+        f.write(f'{test_file} linguist-generated\n')
