@@ -1,3 +1,10 @@
+
+# ignore anything without an extension (typically non-windows binary files),
+# make sure this first because it will overwrite any rules that come before it
+*
+!*/
+!*.*
+
 *.egg
 *.egg-info
 *.pyd
