@@ -6,6 +6,7 @@
 .cache/
 build/
 *.obj
+*.so
 
 # msvc stuff
 *.pdb

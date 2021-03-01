@@ -1,14 +1,19 @@
 
 # python
+import os.path
 import pathlib
 import platform
+import shutil
 from setuptools import Extension, find_packages, setup
 from setuptools.command.build_ext import build_ext
+from setuptools.command.install_lib import install_lib
+
 
 REPO = pathlib.Path(__file__).parent.absolute()
 with open(REPO / 'README.md', encoding='utf8') as f:
     long_description = f.read()
     
+
 tokenizer = Extension(
     '_woosh',
     include_dirs=['src', 'inc'],
@@ -31,7 +36,8 @@ tokenizer = Extension(
         'src/typeobject.c',
     ],
     language='c',
-    extra_compile_args=['-fvisibility=hidden'] if platform.system() != 'Windows' else []
+    extra_compile_args=['-fvisibility=hidden'] if platform.system() != 'Windows' else [],
+    define_macros=[('WOOSH_EXPORT', None)],
     #undef_macros=['NDEBUG'],
     #library_dirs=['F:\programs\microprofiler'],
     #libraries=['micro-profiler_x64'],
@@ -41,6 +47,7 @@ tokenizer = Extension(
     #extra_link_args=['-fprofile-arcs'],
 )
 
+        
 class BuildExtCommand(build_ext):
    
     user_options = build_ext.user_options + [
@@ -62,6 +69,7 @@ class BuildExtCommand(build_ext):
     def finalize_options(self):
         super().finalize_options()
         for extension in self.extensions:
+
             if self.no_optimization:
                 extension.extra_compile_args.append('-O0')
             if self.gcov:
@@ -81,6 +89,28 @@ class BuildExtCommand(build_ext):
                     if self.pgo_data else 
                     '/USEPROFILE'
                 )
+                
+    def build_extension(self, ext):
+        super().build_extension(ext)
+        # the msvc .lib file isn't normally installed in the python package,
+        # this will copy it from the temp build directory to the actual output
+        # directory
+        if self.compiler.__class__.__name__ == 'MSVCCompiler':
+            ext_path = self.get_ext_fullpath(ext.name)
+            output_dir = os.path.dirname(ext_path)
+            # this is explicitly "allowed" despite being an underscore variable
+            build_temp = os.path.dirname(self._built_objects[0])
+            dll_name, dll_ext = os.path.splitext(os.path.basename(ext_path))
+            temp_implib_file = os.path.join(
+                build_temp,
+                self.compiler.library_filename(dll_name)
+            )
+            build_implib_file = os.path.join(
+                output_dir,
+                self.compiler.library_filename(dll_name)
+            )
+            shutil.copy(temp_implib_file, build_implib_file)
+        
 
 setup(
     name='woosh',

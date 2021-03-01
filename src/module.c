@@ -1,6 +1,6 @@
 
 // woosh
-#include "expose.h"
+#include "woosh/expose.h"
 #include "woosh/module.h"
 #include "modulestate.h"
 #include "woosh/tokenobject.h"
@@ -111,6 +111,7 @@ error:
     // LCOV_EXCL_STOP
 }
 
+WOOSH_EXPOSE
 PyObject *
 WooshModule_Get()
 {
