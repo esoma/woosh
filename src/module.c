@@ -111,6 +111,12 @@ error:
     // LCOV_EXCL_STOP
 }
 
+// returns the woosh extension module instance for the current python
+// interpreter
+//
+// raises a RuntimeError and returns 0 if the module has not yet been imported 
+//
+// NOTE: returns a BORROWED REFERENCE
 WOOSH_EXPOSE_
 PyObject *
 WooshModule_Get()
