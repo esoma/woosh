@@ -1,11 +1,11 @@
 
 // woosh
-#include "woosh/expose.h"
-#include "woosh/module.h"
+#include "_woosh/expose.h"
+#include "_woosh/module.h"
 #include "modulestate.h"
-#include "woosh/tokenobject.h"
-#include "woosh/tokenizerobject.h"
-#include "woosh/typeobject.h"
+#include "_woosh/tokenobject.h"
+#include "_woosh/tokenizerobject.h"
+#include "_woosh/typeobject.h"
 
 static PyObject *
 woosh_module_tokenize(PyObject *self, PyObject *args, PyObject *kwargs)

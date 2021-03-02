@@ -5,7 +5,7 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 // woosh
-#include "woosh/typeobject.h"
+#include "_woosh/typeobject.h"
 
 // per-interpreter module state
 struct WooshModuleState

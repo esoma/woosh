@@ -10,7 +10,7 @@
 #include <structmember.h>
 // woosh
 #include "modulestate.h"
-#include "woosh/typeobject.h"
+#include "_woosh/typeobject.h"
 
 struct WooshType_
 {

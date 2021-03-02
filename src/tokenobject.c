@@ -12,7 +12,7 @@
 #include <structmember.h>
 // woosh
 #include "modulestate.h"
-#include "woosh/tokenobject.h"
+#include "_woosh/tokenobject.h"
 
 struct WooshToken_
 {

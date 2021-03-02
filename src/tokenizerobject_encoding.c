@@ -6,9 +6,9 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 // woosh
-#include "woosh/tokenizerobject.h"
+#include "_woosh/tokenizerobject.h"
 #include "tokenizerobject_internal.h"
-#include "woosh/tokenobject.h"
+#include "_woosh/tokenobject.h"
 
 int
 init_encoding(WooshTokenizer *tokenizer)

@@ -10,8 +10,8 @@
 // woosh
 #include "lifobuffer.h"
 #include "modulestate.h"
-#include "woosh/tokenobject.h"
-#include "woosh/tokenizerobject.h"
+#include "_woosh/tokenobject.h"
+#include "_woosh/tokenizerobject.h"
 #include "tokenizerobject_internal.h"
 
 static WooshTokenizer *create_tokenizer(PyObject *, PyObject *, int);

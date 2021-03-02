@@ -5,7 +5,7 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 // woosh
-#include "woosh/tokenobject.h"
+#include "_woosh/tokenobject.h"
 
 struct WooshTokenizer_;
 typedef struct WooshTokenizer_ WooshTokenizer;

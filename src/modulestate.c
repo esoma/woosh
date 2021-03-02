@@ -1,6 +1,6 @@
 
 // woosh
-#include "woosh/module.h"
+#include "_woosh/module.h"
 #include "modulestate.h"
 
 // get the ModuleState for woosh
