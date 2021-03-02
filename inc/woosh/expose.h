@@ -3,15 +3,15 @@
 
 #if defined _WIN32 || defined __CYGWIN__
     #ifdef WOOSH_EXPORT
-        #define WOOSH_EXPOSE __declspec(dllexport)
+        #define WOOSH_EXPOSE_ __declspec(dllexport)
     #else
-        #define WOOSH_EXPOSE __declspec(dllimport)
+        #define WOOSH_EXPOSE_ __declspec(dllimport)
     #endif
 #else
 #ifdef WOOSH_EXPORT
-    #define WOOSH_EXPOSE __attribute__ ((visibility ("default")))
+    #define WOOSH_EXPOSE_ __attribute__ ((visibility ("default")))
 #else
-    #define WOOSH_EXPOSE
+    #define WOOSH_EXPOSE_
 #endif
 #endif
 

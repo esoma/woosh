@@ -7,7 +7,7 @@
 // woosh
 #include "woosh/expose.h"
 
-WOOSH_EXPOSE
+WOOSH_EXPOSE_
 PyObject *WooshModule_Get();
 
 #endif

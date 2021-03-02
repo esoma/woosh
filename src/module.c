@@ -56,7 +56,7 @@ static struct PyModuleDef woosh_module = {
     woosh_module_clear
 };
 
-WOOSH_EXPOSE
+WOOSH_EXPOSE_
 PyMODINIT_FUNC
 PyInit__woosh()
 {
@@ -111,7 +111,7 @@ error:
     // LCOV_EXCL_STOP
 }
 
-WOOSH_EXPOSE
+WOOSH_EXPOSE_
 PyObject *
 WooshModule_Get()
 {
