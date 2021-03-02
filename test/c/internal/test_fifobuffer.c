@@ -2,7 +2,7 @@
 // c
 #include <stdio.h>
 // fifobuffer
-#include "fifobuffer.h"
+#include "fifobuffer.c"
 
 int main()
 {

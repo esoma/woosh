@@ -1,5 +1,6 @@
+@echo off
 
-mkdir build
+mkdir build 2> nul
 
 python -c "import _woosh; import pathlib; print(pathlib.Path(_woosh.__file__).parent)" > build/_WOOSH_DLL_DIR
 set /P WOOSH_DLL_DIR=<build/_WOOSH_DLL_DIR

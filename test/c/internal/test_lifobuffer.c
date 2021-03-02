@@ -2,7 +2,7 @@
 // c
 #include <stdio.h>
 // lifobuffer
-#include "lifobuffer.h"
+#include "lifobuffer.c"
 
 int main()
 {
