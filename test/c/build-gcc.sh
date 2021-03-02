@@ -2,7 +2,9 @@
 
 echo "Building woosh C tests..."
 
-GCC_COV_FLAGS="-fprofile-arcs -ftest-coverage"
+mkdir build
+
+GCC_COV_FLAGS="-fprofile-arcs -ftest-coverage -fprofile-dir=build"
 
 PYTHON_INCLUDES=$(python3-config --includes)
 echo "PYTHON_INCLUDES=${PYTHON_INCLUDES}"
@@ -27,6 +29,6 @@ echo "WOOSH_LIB_DIR=${WOOSH_LIB_DIR}"
 WOOSH_LIB=$(python3 -c "import _woosh; import pathlib; print(pathlib.Path(_woosh.__file__).name)")
 echo "WOOSH_LIB=${WOOSH_LIB}"
 
-gcc ${GCC_COV_FLAGS} -o test_fifobuffer -I ../../src/ ../../src/fifobuffer.c test_fifobuffer.c
-gcc ${GCC_COV_FLAGS} -o test_lifobuffer -I ../../src/ ../../src/lifobuffer.c test_lifobuffer.c
-gcc ${GCC_COV_FLAGS} -o test_module_get -Wl,-rpath="${WOOSH_LIB_DIR}" -I ../../inc/ ${PYTHON_LIBDIRS} ${PYTHON_INCLUDES} -L ${WOOSH_LIB_DIR} capi_test_base.c test_module_get.c -l:"${WOOSH_LIB}" ${PYTHON_LIBS} 
+gcc ${GCC_COV_FLAGS} -o build/test_fifobuffer -I ../../src/ ../../src/fifobuffer.c internal/test_fifobuffer.c
+gcc ${GCC_COV_FLAGS} -o build/test_lifobuffer -I ../../src/ ../../src/lifobuffer.c internal/test_lifobuffer.c
+gcc ${GCC_COV_FLAGS} -o build/test_module_get -Wl,-rpath="${WOOSH_LIB_DIR}" -I ../../inc/ ${PYTHON_LIBDIRS} ${PYTHON_INCLUDES} -L ${WOOSH_LIB_DIR} api/base.c api/test_module_get.c -l:"${WOOSH_LIB}" ${PYTHON_LIBS} 
