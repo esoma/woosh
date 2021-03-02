@@ -68,7 +68,6 @@ class BuildExtCommand(build_ext):
     def finalize_options(self):
         super().finalize_options()
         for extension in self.extensions:
-
             if self.no_optimization:
                 extension.extra_compile_args.append('-O0')
             if self.gcov:
