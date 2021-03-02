@@ -7,7 +7,10 @@ GCC_COV_FLAGS="-fprofile-arcs -ftest-coverage"
 PYTHON_INCLUDES=$(python3-config --includes)
 echo "PYTHON_INCLUDES=${PYTHON_INCLUDES}"
 
-PYTHON_LIBS=$(python3-config --libs)
+PYTHON_LIBS=$(python3-config --libs --embed)
+if [[ $? != 0 ]]; then
+    PYTHON_LIBS=$(python3-config --libs)
+fi
 echo "PYTHON_LIBS=${PYTHON_LIBS}"
 
 PYTHON_LIBDIRS=""
