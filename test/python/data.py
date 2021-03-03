@@ -1,17 +1,31 @@
 
 # this module contains a collection of valid and invalid tokens or bits of
 # source to be used for testing
+#
+# the environment variable WOOSH_TEST_DATA_LIGHT controls how thorough the
+# data set is, the default (falsey) uses the heaviest test data
+#
+# if WOOSH_TEST_DATA_LIGHT is set the data sets will be much lighter, this is
+# useful for quicker iterations on testing
 
 from . import ucd
 
 # python
 import itertools
+import os
 
-NORMAL_ASCII_CHARACTERS = tuple(
+_HEAVY = not bool(os.environ.get("WOOSH_TEST_DATA_LIGHT"))
+
+ALL_NORMAL_ASCII_CHARACTERS = tuple(
     chr(i) for i in itertools.chain(
         range(ord(' '), ord('~') + 1),
     )
 ) + ('\t',)
+
+if _HEAVY:
+    NORMAL_ASCII_CHARACTERS = ALL_NORMAL_ASCII_CHARACTERS
+else:
+    NORMAL_ASCII_CHARACTERS = (' ', 'a', 'z', 'A', 'Z', '~', '0', '\t')
 
 NEWLINES = ('\n', '\r\n')
 OPTIONAL_NEWLINES = ('',) + NEWLINES
@@ -101,16 +115,16 @@ INVALID_STRING_LITERALS = (
 VALID_NAME_LITERALS = (
     '_',
     # name start characters
-    # we only check the min and max in each range since checking every character
-    # isn't all that reasonable
+    # we only check the min and max in each range since checking every
+    # character isn't all that reasonable
     *(
         chr(c)
         for min_max in ucd.XID_START
         for c in min_max
     ),
     # name continue characters
-    # we only check the min and max in each range since checking every character
-    # isn't all that reasonable
+    # we only check the min and max in each range since checking every
+    # character isn't all that reasonable
     *(
         f'_{chr(c)}'
         for min_max in ucd.XID_CONTINUE
@@ -126,7 +140,7 @@ INVALID_NAME_LITERALS = (
     *(
         (chr(c), chr(c))
         for c in range(1, 128)
-        if chr(c) not in NORMAL_ASCII_CHARACTERS
+        if chr(c) not in ALL_NORMAL_ASCII_CHARACTERS
         if chr(c) != '\n'
     ),
     # starting with a non-start ucd character
@@ -236,7 +250,13 @@ BINARIES_SPLIT_BY_TOKEN = (
 )
 
 OCTAL_SIGILS = ('o', 'O')
-OCTAL_VALUES = tuple(str(i) for i in range(0, 8))
+
+ALL_OCTAL_VALUES = tuple(str(i) for i in range(0, 8))
+if _HEAVY:
+    OCTAL_VALUES = ALL_OCTAL_VALUES
+else:
+    OCTAL_VALUES = ('0', '7')
+    
 VALID_OCTAL_VALUES = (
     *OCTAL_VALUES,
     *(f'{o0}{o1}' for o0, o1 in itertools.product(
@@ -293,7 +313,7 @@ OCTAL_SPLIT_BY_TOKEN = (
             OCTAL_SIGILS,
             (
                 c for c in NORMAL_ASCII_CHARACTERS + NEWLINES
-                if c not in OCTAL_VALUES
+                if c not in ALL_OCTAL_VALUES
                 if c != '_'
             )
         )
@@ -301,11 +321,17 @@ OCTAL_SPLIT_BY_TOKEN = (
 )
 
 HEX_SIGILS = ('x', 'X')
-HEX_VALUES = (
+
+ALL_HEX_VALUES = (
     *(str(i) for i in range(0, 10)),
     *(chr(i) for i in range(ord('a'), ord('f') + 1)),
     *(chr(i) for i in range(ord('A'), ord('F') + 1))
 )
+if _HEAVY:
+    HEX_VALUES = ALL_HEX_VALUES
+else:
+    HEX_VALUES = ('0', '9', 'a', 'f', 'A', 'F')
+    
 VALID_HEX_EXPONENT_VALUES = (
     *HEX_VALUES,
     *(f'0{v}' for v in HEX_VALUES),
@@ -383,14 +409,18 @@ HEX_SPLIT_BY_TOKEN = (
             HEX_SIGILS,
             (
                 c for c in NORMAL_ASCII_CHARACTERS + NEWLINES
-                if c not in HEX_VALUES
+                if c not in ALL_HEX_VALUES
                 if c != '_'
             )
         )
     ),
 )
 
-DECIMAL_VALUES = tuple(str(i) for i in range(0, 10))
+if _HEAVY:
+    DECIMAL_VALUES = tuple(str(i) for i in range(0, 10))
+else:
+    DECIMAL_VALUES = ('0', '9')
+
 VALID_EXPONENT_VALUES = (
     *DECIMAL_VALUES,
     *(f'0{v}' for v in DECIMAL_VALUES),
