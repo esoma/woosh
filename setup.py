@@ -74,26 +74,45 @@ class BuildExtCommand(build_ext):
                 extension.extra_compile_args.append('-fprofile-arcs')
                 extension.extra_compile_args.append('-ftest-coverage')
                 extension.extra_link_args.append('-fprofile-arcs')
-            if self.pgo_generate:
-                extension.extra_compile_args.append('/GL')
-                extension.extra_link_args.append(
+                
+    def build_extension(self, ext):
+        is_msvc = self.compiler.__class__.__name__ == 'MSVCCompiler'
+        if self.pgo_generate:
+            if is_msvc:
+                ext.extra_compile_args.append('/GL')
+                ext.extra_link_args.append(
                     f'/FASTGENPROFILE:PGD={self.pgo_data}'
                     if self.pgo_data else 
                     '/FASTGENPROFILE'
                 )
-            if self.pgo_use:
-                extension.extra_link_args.append(
+            else:
+                flag = (
+                    f'-fprofile-generate={self.pgo_data}'
+                    if self.pgo_data else
+                    '-fprofile-generate'
+                )
+                ext.extra_compile_args.append(flag)
+                ext.extra_link_args.append(flag)
+        if self.pgo_use:
+            if is_msvc:
+                ext.extra_link_args.append(
                     f'/USEPROFILE:PGD={self.pgo_data}'
                     if self.pgo_data else 
                     '/USEPROFILE'
                 )
-                
-    def build_extension(self, ext):
+            else:
+                flag = (
+                    f'-fprofile-use={self.pgo_data}'
+                    if self.pgo_data else
+                    '-fprofile-use'
+                )
+                ext.extra_compile_args.append(flag)
+                ext.extra_link_args.append(flag)
         super().build_extension(ext)
         # the msvc .lib file isn't normally installed in the python package,
         # this will copy it from the temp build directory to the actual output
         # directory
-        if self.compiler.__class__.__name__ == 'MSVCCompiler':
+        if is_msvc:
             ext_path = self.get_ext_fullpath(ext.name)
             output_dir = os.path.dirname(ext_path)
             # this is explicitly "allowed" despite being an underscore variable
