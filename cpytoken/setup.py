@@ -1,7 +1,5 @@
 
 # python
-import os.path
-import shutil
 from setuptools import Extension, setup
 from setuptools.command.build_ext import build_ext
     
