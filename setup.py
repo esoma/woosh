@@ -77,6 +77,15 @@ class BuildExtCommand(build_ext):
                 
     def build_extension(self, ext):
         is_msvc = self.compiler.__class__.__name__ == 'MSVCCompiler'
+        if is_msvc:
+            ext_path = self.get_ext_fullpath(ext.name)
+            dll_name, dll_ext = os.path.splitext(os.path.basename(ext_path))
+            output_dir = os.path.dirname(ext_path)
+            implib = os.path.join(
+                output_dir,
+                self.compiler.library_filename(dll_name)
+            )
+            ext.extra_link_args.append(f'/IMPLIB:{implib}')
         if self.pgo_generate:
             if is_msvc:
                 ext.extra_compile_args.append('/GL')
@@ -109,24 +118,6 @@ class BuildExtCommand(build_ext):
                 ext.extra_compile_args.append(flag)
                 ext.extra_link_args.append(flag)
         super().build_extension(ext)
-        # the msvc .lib file isn't normally installed in the python package,
-        # this will copy it from the temp build directory to the actual output
-        # directory
-        if is_msvc:
-            ext_path = self.get_ext_fullpath(ext.name)
-            output_dir = os.path.dirname(ext_path)
-            # this is explicitly "allowed" despite being an underscore variable
-            build_temp = os.path.dirname(self._built_objects[0])
-            dll_name, dll_ext = os.path.splitext(os.path.basename(ext_path))
-            temp_implib_file = os.path.join(
-                build_temp,
-                self.compiler.library_filename(dll_name)
-            )
-            build_implib_file = os.path.join(
-                output_dir,
-                self.compiler.library_filename(dll_name)
-            )
-            shutil.copy(temp_implib_file, build_implib_file)
         
 
 setup(
