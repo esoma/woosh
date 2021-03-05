@@ -122,7 +122,7 @@ for TEST in $INTERNAL_TESTS; do
     
     echo "    Building $TEST_NAME..."
     
-    gcc ${GCC_COV_FLAGS} -o "build/${TEST_NAME}" -I ../../src/ "${TEST}"
+    gcc ${GCC_COV_FLAGS} -o "build/${TEST_NAME}" -I ../../src/_woosh/ "${TEST}"
     if [[ $? != 0 ]]; then
         RETVAL=$?
         echo "Failed to build test."

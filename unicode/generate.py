@@ -50,7 +50,7 @@ with open(WOOSH_DIR / 'test/python/ucd.py', 'w') as f:
             f.write(f'    ({min}, {max}),\n')
         f.write(')\n')
 
-with open(WOOSH_DIR / 'src/unicode.h', 'wb') as f:
+with open(WOOSH_DIR / 'src/_woosh/unicode.h', 'wb') as f:
     f.write(textwrap.dedent('''
         // this file is generated from woosh/unicode/generate.py using
         // properties from the unicode character database

@@ -42,6 +42,6 @@ for /f %%f in (build/_INTERNAL_TESTS) do (
     echo     Building %%~nf...
     if exist build\%%~nf.exe del /f build\%%~nf.exe
     if exist build\%%~nf.exe echo "Failed to delete test." && exit /b 1
-    cl /Fo.\build\ /I ../../src/ %%f /link /out:build/%%~nf.exe 1>build/%%~nf.log 2>&1
+    cl /Fo.\build\ /I ../../src/_woosh/ %%f /link /out:build/%%~nf.exe 1>build/%%~nf.log 2>&1
     if not exist build\%%~nf.exe type build\%%~nf.log && echo Failed to build test.  && exit /b 1
 )
