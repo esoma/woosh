@@ -5,6 +5,6 @@ case $(uname) in
         source ./build-msvc.sh
         ;;
     *)
-        source ./build-gcc.sh
+        source ./build-cc.sh
         ;;
 esac

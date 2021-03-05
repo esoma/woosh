@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 
-GCC_COV_FLAGS="-fprofile-arcs -ftest-coverage"
-
+_CC_COV_FLAGS="-fprofile-arcs -ftest-coverage"
 
 echo "Discovering environment..."
+
+if [[ -z "$CC" ]]; then
+    CC=gcc
+fi
 
 mkdir -p build
 if [[ $? != 0 ]]; then
@@ -97,7 +100,7 @@ for TEST in $API_TESTS; do
     
     echo "    Building $TEST_NAME..."
     
-    gcc ${GCC_COV_FLAGS} -o "build/${TEST_NAME}"\
+    "$CC" ${_CC_COV_FLAGS} -o "build/${TEST_NAME}"\
         -Wl,-rpath="${WOOSH_LIB_DIR}" -I ../../inc/\
         ${PYTHON_LIBDIRS} ${PYTHON_INCLUDES} -L ${WOOSH_LIB_DIR}\
         api/base.c "${TEST}" -l:"${WOOSH_LIB}" ${PYTHON_LIBS}
@@ -122,7 +125,7 @@ for TEST in $INTERNAL_TESTS; do
     
     echo "    Building $TEST_NAME..."
     
-    gcc ${GCC_COV_FLAGS} -o "build/${TEST_NAME}" -I ../../src/_woosh/ "${TEST}"
+    "$CC" ${_CC_COV_FLAGS} -o "build/${TEST_NAME}" -I ../../src/_woosh/ "${TEST}"
     if [[ $? != 0 ]]; then
         RETVAL=$?
         echo "Failed to build test."
