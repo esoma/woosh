@@ -68,8 +68,6 @@ class BuildExtCommand(build_ext):
     def finalize_options(self):
         super().finalize_options()
         for extension in self.extensions:
-            if self.no_optimization:
-                extension.extra_compile_args.append('-O0')
             if self.gcov:
                 extension.extra_compile_args.append('-fprofile-arcs')
                 extension.extra_compile_args.append('-ftest-coverage')
@@ -86,6 +84,11 @@ class BuildExtCommand(build_ext):
                 self.compiler.library_filename(dll_name)
             )
             ext.extra_link_args.append(f'/IMPLIB:{implib}')
+        if self.no_optimization:
+            if is_msvc:
+                ext.extra_compile_args.append('/Od')
+            else:
+                ext.extra_compile_args.append('-O0')
         if self.pgo_generate:
             if is_msvc:
                 ext.extra_compile_args.append('/GL')
