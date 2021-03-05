@@ -34,8 +34,7 @@ jobs:
       run: |
         python setup.py build_ext --gcov --no-optimization -UNDEBUG install
         cd test/c
-        sh build-cc.sh
-        cd ../..
+        bash build-cc.sh
         
     - name: Python Tests
       run: |
@@ -44,7 +43,7 @@ jobs:
     - name: C Tests
       run: |
         cd test/c
-        sh test.sh
+        bash test.sh
 
     - name: Codecov
       uses: codecov/codecov-action@v1.2.1
