@@ -35,7 +35,6 @@ tokenizer = Extension(
         'src/_woosh/typeobject.c',
     ],
     language='c',
-    extra_compile_args=['-fvisibility=hidden'] if platform.system() != 'Windows' else [],
     define_macros=[('WOOSH_EXPORT', None)],
     #undef_macros=['NDEBUG'],
     #library_dirs=['F:\programs\microprofiler'],
@@ -76,6 +75,8 @@ class BuildExtCommand(build_ext):
                 self.compiler.library_filename(dll_name)
             )
             ext.extra_link_args.append(f'/IMPLIB:{implib}')
+        else:
+            ext.extra_compile_args.append('-fvisibility=hidden')
         if self.gcov:
             if is_msvc:
                 raise ValueError('Cannot build with gcov on MSVC.')
