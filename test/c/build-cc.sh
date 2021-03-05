@@ -32,12 +32,13 @@ fi
 echo "    PYTHON_LIBS=${PYTHON_LIBS}"
 
 PYTHON_LIBDIRS=""
-_=$(python3-config --ldflags);
+PYTHON_LDFLAGS=$(python3-config --ldflags);
 if [[ $? != 0 ]]; then
     echo "Failed to get python lib compilation flags."
     exit 1
 fi
-for LDFLAG in $_; do
+echo "    PYTHON_LDFLAGS=${PYTHON_LDFLAGS}"
+for LDFLAG in $PYTHON_LDFLAGS; do
     if [[ ${LDFLAG} == -L* ]]; then
         PYTHON_LIBDIRS="${PYTHON_LIBDIRS} ${LDFLAG}"
     fi
