@@ -64,14 +64,6 @@ class BuildExtCommand(build_ext):
         self.pgo_data = None
         self.gcov = None
         self.no_optimization = None
-        
-    def finalize_options(self):
-        super().finalize_options()
-        for extension in self.extensions:
-            if self.gcov:
-                extension.extra_compile_args.append('-fprofile-arcs')
-                extension.extra_compile_args.append('-ftest-coverage')
-                extension.extra_link_args.append('-fprofile-arcs')
                 
     def build_extension(self, ext):
         is_msvc = self.compiler.__class__.__name__ == 'MSVCCompiler'
@@ -84,6 +76,13 @@ class BuildExtCommand(build_ext):
                 self.compiler.library_filename(dll_name)
             )
             ext.extra_link_args.append(f'/IMPLIB:{implib}')
+        if self.gcov:
+            if is_msvc:
+                raise ValueError('Cannot build with gcov on MSVC.')
+            else:
+                ext.extra_compile_args.append('-fprofile-arcs')
+                ext.extra_compile_args.append('-ftest-coverage')
+                ext.extra_link_args.append('-fprofile-arcs')
         if self.no_optimization:
             if is_msvc:
                 ext.extra_compile_args.append('/Od')
