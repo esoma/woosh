@@ -91,7 +91,7 @@ cpy_tokenizer_iternext(struct CpyTokenizer *self)
     Py_DECREF(value);
     if (!token){ return 0;}
 
-    if (type == ENDMARKER)
+    if (type == ENDMARKER || type == ERRORTOKEN)
     {
         self->done = 1;
     }
