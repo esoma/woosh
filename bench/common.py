@@ -5,8 +5,13 @@ import pyperf
 import io
 import os
 import pathlib
+import sys
 
 DATA = (pathlib.Path(__file__).parent.absolute() / '../sample').resolve()
+
+# parso needs this and pyperf doesn't include it in the inherit environs by
+# default
+sys.argv += ['--inherit-environ', 'LOCALAPPDATA']
 
 runner = pyperf.Runner()
 
