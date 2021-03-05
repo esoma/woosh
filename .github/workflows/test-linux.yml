@@ -24,11 +24,6 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
         
-    - name: Install gdb
-      run: |
-        sudo apt-get update
-        sudo apt-get install gdb
-        
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -39,20 +34,17 @@ jobs:
       run: |
         python setup.py build_ext --gcov --no-optimization -UNDEBUG install
         cd test/c
-        chmod a+x build-cc.sh
-        ./build-cc.sh
+        sh build-cc.sh
         cd ../..
         
     - name: Python Tests
       run: |
-        gdb -return-child-result -batch -ex "run" -ex "bt" --args python3 -m pytest -p no:cacheprovider -s
+        python3 -m pytest -p no:cacheprovider -s
         
     - name: C Tests
       run: |
         cd test/c
-        chmod a+x test.sh
-        ./test.sh
-        cd ../..
+        sh test.sh
 
     - name: Codecov
       uses: codecov/codecov-action@v1.2.1
