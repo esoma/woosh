@@ -3,8 +3,11 @@
 import os.path
 import pathlib
 import platform
+import sys
+# pgo
+import pgo
+# setuptools
 from setuptools import Extension, find_packages, setup
-from setuptools.command.build_ext import build_ext
 
 
 REPO = pathlib.Path(__file__).parent.absolute()
@@ -44,22 +47,19 @@ tokenizer = Extension(
     #extra_link_args=['-fprofile-arcs'],
 )
 
-        
+
+build_ext = pgo.make_build_ext([sys.executable, REPO / 'profile.py'])
+
+
 class BuildExtCommand(build_ext):
    
     user_options = build_ext.user_options + [
-        ('pgo-generate', None, 'build with profile guided instrumentation'),
-        ('pgo-use', None, 'build using profile guided optimization'),
-        ('pgo-data=', None, 'the pgo data location/file'),
         ('gcov', None, 'build with gcov instrumentation'),
         ('no-optimization', None, 'build without optimizations'),
     ]
     
     def initialize_options(self):
         super().initialize_options()
-        self.pgo_generate = None
-        self.pgo_use = None
-        self.pgo_data = None
         self.gcov = None
         self.no_optimization = None
                 
@@ -88,37 +88,7 @@ class BuildExtCommand(build_ext):
                 ext.extra_compile_args.append('/Od')
             else:
                 ext.extra_compile_args.append('-O0')
-        if self.pgo_generate:
-            if is_msvc:
-                ext.extra_compile_args.append('/GL')
-                ext.extra_link_args.append(
-                    f'/FASTGENPROFILE:PGD={self.pgo_data}'
-                    if self.pgo_data else 
-                    '/FASTGENPROFILE'
-                )
-            else:
-                flag = (
-                    f'-fprofile-generate={self.pgo_data}'
-                    if self.pgo_data else
-                    '-fprofile-generate'
-                )
-                ext.extra_compile_args.append(flag)
-                ext.extra_link_args.append(flag)
-        if self.pgo_use:
-            if is_msvc:
-                ext.extra_link_args.append(
-                    f'/USEPROFILE:PGD={self.pgo_data}'
-                    if self.pgo_data else 
-                    '/USEPROFILE'
-                )
-            else:
-                flag = (
-                    f'-fprofile-use={self.pgo_data}'
-                    if self.pgo_data else
-                    '-fprofile-use'
-                )
-                ext.extra_compile_args.append(flag)
-                ext.extra_link_args.append(flag)
+
         super().build_extension(ext)
         
 

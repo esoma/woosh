@@ -5,6 +5,7 @@
 !*/
 !*.*
 
+dist
 *.egg
 *.egg-info
 *.pyd

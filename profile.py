@@ -9,7 +9,7 @@ import io
 import os
 import pathlib
 
-DATA = (pathlib.Path(__file__).parent.absolute() / '../sample').resolve()
+DATA = (pathlib.Path(__file__).parent.absolute() / 'sample').resolve()
 
 for directory, _, files in os.walk(DATA):
     if directory.endswith('contrived'):

@@ -20,6 +20,8 @@ def bench(func):
         directory = pathlib.Path(directory)
         for file in files:
             data_file = directory / file
+            if not data_file.name == 'abc.py':
+                continue
             if not data_file.name.endswith('.py'):
                 continue
             with open(data_file, 'rb') as f:
