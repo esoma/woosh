@@ -20,7 +20,7 @@ def bench(func):
         directory = pathlib.Path(directory)
         for file in files:
             data_file = directory / file
-            if not data_file.name == 'abc.py':
+            if data_file.name != 'abc.py' and data_file.name != 'getpass.py':
                 continue
             if not data_file.name.endswith('.py'):
                 continue
