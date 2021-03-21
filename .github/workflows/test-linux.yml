@@ -33,7 +33,7 @@ jobs:
         
     - name: Build
       run: |
-        python setup.py build_ext --gcov --no-optimization --pgo-disable -UNDEBUG install
+        python setup.py install build --pgo-disable build_ext --gcov --no-optimization -UNDEBUG
         cd test/c
         chmod a+x build-cc.sh
         ./build-cc.sh

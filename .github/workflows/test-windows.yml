@@ -34,7 +34,7 @@ jobs:
         
     - name: Build
       run: |
-        python setup.py build_ext -UNDEBUG --pgo-disable install
+        python setup.py install build --pgo-disable build_ext -UNDEBUG
         cd test/c
         cmd /r build-msvc.bat
         cd ../..
