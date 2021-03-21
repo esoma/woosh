@@ -4,10 +4,9 @@ import os.path
 import pathlib
 import platform
 import sys
-# pgo
-import pgo
 # setuptools
 from setuptools import Extension, find_packages, setup
+from setuptools.command.build_ext import build_ext
 
 
 REPO = pathlib.Path(__file__).parent.absolute()
@@ -46,9 +45,6 @@ tokenizer = Extension(
     #extra_compile_args=['-fprofile-arcs', '-ftest-coverage'],
     #extra_link_args=['-fprofile-arcs'],
 )
-
-
-build_ext = pgo.make_build_ext([sys.executable, REPO / 'profile.py'])
 
 
 class BuildExtCommand(build_ext):
@@ -119,5 +115,8 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 3',
     ],
+    pgo={
+        "profile_command": [sys.executable, str(REPO / 'profile.py')],
+    },
     python_requires='>=3.6',
 )
