@@ -2,10 +2,13 @@
 # pgo
 import pgo
 # python
+import pathlib
 import sys
 # setuptools
 from setuptools import Extension, setup
 
+
+dir = pathlib.Path(__file__).parent.absolute()
     
 cpytoken = Extension(
     '_woosh_cpytoken',
@@ -20,7 +23,7 @@ cpytoken = Extension(
 setup(
     name='woosh-cpytoken',
     ext_modules=[cpytoken],
-    cmdclass={
-        'build_ext': pgo.make_build_ext([sys.executable, 'profile.py']),
+    pgo={
+        "profile_command": [sys.executable, str(dir / 'profile.py')],
     },
 )
