@@ -40,7 +40,8 @@ jobs:
         
     - uses: ilammy/msvc-dev-cmd@v1
     - name: Build C Tests
-      arch: ${{ matrix.python-arch }}
+      with:
+        arch: ${{ matrix.python-arch }}
       run: |
         cd test/c
         cmd /r build-msvc.bat
