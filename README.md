@@ -3,7 +3,7 @@
 ![License: MIT](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
 
 
-[![linux tests status](https://img.shields.io/github/workflow/status/esoma/woosh/test-linux?label=tests&logo=linux&logoColor=white&style=flat-square)](https://github.com/esoma/woosh/actions/workflows/test-linux.yml)
+[![unix tests status](https://img.shields.io/github/workflow/status/esoma/woosh/test-unix?label=unix%20tests&style=flat-square)](https://github.com/esoma/woosh/actions/workflows/test-unix.yml)
 [![windows tests status](https://img.shields.io/github/workflow/status/esoma/woosh/test-windows?label=tests&logo=windows&logoColor=white&style=flat-square)](https://github.com/esoma/woosh/actions/workflows/test-windows.yml)
 [![coverage](https://img.shields.io/codecov/c/github/esoma/woosh?style=flat-square)](https://app.codecov.io/gh/esoma/woosh)
 [![c quality](https://img.shields.io/lgtm/grade/cpp/github/esoma/woosh?label=c%20quality&style=flat-square)](https://lgtm.com/projects/g/esoma/woosh/alerts/?mode=tree)
