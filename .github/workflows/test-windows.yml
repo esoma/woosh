@@ -34,9 +34,14 @@ jobs:
         python -m pip install pgo
         python -m pip install pytest
         
-    - name: Build
+    - name: Build woosh
       run: |
         python setup.py install build --pgo-disable build_ext -UNDEBUG
+        
+    - uses: ilammy/msvc-dev-cmd@v1
+    - name: Build C Tests
+      arch: ${{ matrix.python-arch }}
+      run: |
         cd test/c
         cmd /r build-msvc.bat
         cd ../..
