@@ -47,6 +47,15 @@ tokenizer = Extension(
 )
 
 
+# c extensions are normally built as "bundles" on macos, which are
+# non-linkable, instead build as a "dynlib" which is otherwise similar to a
+# bundle but also linkable
+if sys.platform == 'darwin':
+    from distutils import sysconfig
+    vars = sysconfig.get_config_vars()
+    vars["LDSHARED"] = vars["LDSHARED"].replace('-bundle', '-dynamiclib')
+
+
 class BuildExtCommand(build_ext):
    
     user_options = build_ext.user_options + [
