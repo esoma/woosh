@@ -93,7 +93,7 @@ for TEST in $API_TESTS; do
     echo "    Building $TEST_NAME..."
     
     "$CC" ${_CC_COV_FLAGS} -o "build/${TEST_NAME}"\
-        -Wl,-rpath="${WOOSH_LIB_DIR}" -I ../../inc/\
+        -Wl,-rpath,"${WOOSH_LIB_DIR}" -I ../../inc/\
         ${PYTHON_LIBDIRS} ${PYTHON_INCLUDES} -L ${WOOSH_LIB_DIR}\
         api/base.c "${TEST}" -l:"${WOOSH_LIB}" ${PYTHON_LIBS}
     if [[ $? != 0 ]]; then
