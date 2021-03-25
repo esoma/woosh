@@ -1,6 +1,4 @@
 
-# pgo
-import pgo
 # python
 import pathlib
 import sys

@@ -2,7 +2,6 @@
 # python
 import os.path
 import pathlib
-import platform
 import sys
 # setuptools
 from setuptools import Extension, find_packages, setup
