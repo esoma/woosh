@@ -20,6 +20,8 @@ def _(source, source_file):
     context = CythonContext([], [], language_level=3)
     desc = CythonStringSourceDescriptor(b'__main__.py', source_string)
     scope = CythonScope(context)
+    if not source_string:
+        return
     tokenizer = CythonTokenizer(
         io.StringIO(source_string),
         desc,
